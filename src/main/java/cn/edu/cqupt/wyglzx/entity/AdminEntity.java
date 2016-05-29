@@ -1,6 +1,7 @@
 package cn.edu.cqupt.wyglzx.entity;
 
 import cn.edu.cqupt.wyglzx.common.OutputEntityJsonView;
+import cn.edu.cqupt.wyglzx.model.Role;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 
@@ -12,7 +13,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "admin", schema = "sdq", catalog = "")
 public class AdminEntity {
-    private int id;
+    private long id;
     private String name = "";
     private String password;
     private String username;
@@ -25,11 +26,11 @@ public class AdminEntity {
     @Column(name = "id", nullable = false)
     @JsonProperty("id")
     @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -77,6 +78,14 @@ public class AdminEntity {
 
     public void setPriv(int priv) {
         this.priv = priv;
+    }
+
+    @Transient
+    public Role getRole() {
+        if (this.getPriv() == 5) {
+            return Role.ROOT;
+        }
+        return Role.COMMON;
     }
 
     @Basic
@@ -136,7 +145,7 @@ public class AdminEntity {
 
     @Override
     public int hashCode() {
-        int result = id;
+        int result = (int) (id ^ (id >>> 32));
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (password != null ? password.hashCode() : 0);
         result = 31 * result + (username != null ? username.hashCode() : 0);

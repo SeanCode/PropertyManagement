@@ -29,6 +29,10 @@ public class AdminService {
         return admin != null && PasswordHash.validatePassword(password, admin.getPassword());
     }
 
+    public AdminEntity getAdminByName(String name) {
+        return adminDao.existByName(name);
+    }
+
     public AdminEntity addAdmin(String name, String password) throws InvalidKeySpecException, NoSuchAlgorithmException {
         AdminEntity admin = adminDao.existByName(name);
         if (admin != null) {

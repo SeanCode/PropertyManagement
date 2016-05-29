@@ -18,7 +18,7 @@ public class DataResponse {
     public DataResponse(int code)
     {
         this.code = code;
-        this.data = new HashMap<>();
+        this.data = new HashMap<String, Object>();
     }
 
     public DataResponse put(String key, Object object)

@@ -25,20 +25,20 @@ public class AdminController {
 
     @RequestMapping("/password-update")
     @JsonView(OutputEntityJsonView.Basic.class)
-    public DataResponse updatePassword(@RequestParam("username") String userName,
+    public DataResponse updatePassword(@RequestParam("name") String name,
                                        @RequestParam("password") String password,
                                        @RequestParam("old_password") String oldPassword) throws InvalidKeySpecException, NoSuchAlgorithmException {
 
 
-        return new DataResponse().put("admin", adminService.updatePassword(userName, password, oldPassword));
+        return new DataResponse().put("admin", adminService.updatePassword(name, password, oldPassword));
     }
 
     @RequestMapping("/password-reset")
     @JsonView(OutputEntityJsonView.Basic.class)
-    public DataResponse resetPassword(@RequestParam("username") String userName,
+    public DataResponse resetPassword(@RequestParam("name") String name,
                                       @RequestParam("password") String password) throws InvalidKeySpecException, NoSuchAlgorithmException {
 
-        adminService.resetPassword(userName, password);
+        adminService.resetPassword(name, password);
 
         return new DataResponse();
     }

@@ -71,7 +71,7 @@ public class Util {
     }
 
     public static Map<String, Integer> convertDecToIntValueByKeys(Long dec, List<String> keys) {
-        Map<String, Integer> map = new HashMap<>();
+        Map<String, Integer> map = new HashMap<String, Integer>();
         int length = keys.size();
         int i = 0;
         for (; i < length; i++) {
