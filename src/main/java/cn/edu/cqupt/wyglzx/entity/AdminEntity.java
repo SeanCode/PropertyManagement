@@ -1,5 +1,9 @@
 package cn.edu.cqupt.wyglzx.entity;
 
+import cn.edu.cqupt.wyglzx.common.OutputEntityJsonView;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
+
 import javax.persistence.*;
 
 /**
@@ -9,16 +13,18 @@ import javax.persistence.*;
 @Table(name = "admin", schema = "sdq", catalog = "")
 public class AdminEntity {
     private int id;
-    private String name;
+    private String name = "";
     private String password;
     private String username;
-    private int auth;
-    private int weight;
-    private long createTime;
-    private long updateTime;
+    private int priv = 0;
+    private int weight = 0;
+    private long createTime = 0L;
+    private long updateTime = 0L;
 
     @Id
-    @Column(name = "id")
+    @Column(name = "id", nullable = false)
+    @JsonProperty("id")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public int getId() {
         return id;
     }
@@ -28,7 +34,9 @@ public class AdminEntity {
     }
 
     @Basic
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
+    @JsonProperty("name")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public String getName() {
         return name;
     }
@@ -38,7 +46,7 @@ public class AdminEntity {
     }
 
     @Basic
-    @Column(name = "password")
+    @Column(name = "password", nullable = false)
     public String getPassword() {
         return password;
     }
@@ -48,7 +56,9 @@ public class AdminEntity {
     }
 
     @Basic
-    @Column(name = "username")
+    @Column(name = "username", nullable = false)
+    @JsonProperty("username")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public String getUsername() {
         return username;
     }
@@ -58,17 +68,21 @@ public class AdminEntity {
     }
 
     @Basic
-    @Column(name = "auth")
-    public int getAuth() {
-        return auth;
+    @Column(name = "priv", nullable = false)
+    @JsonProperty("priv")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    public int getPriv() {
+        return priv;
     }
 
-    public void setAuth(int auth) {
-        this.auth = auth;
+    public void setPriv(int priv) {
+        this.priv = priv;
     }
 
     @Basic
-    @Column(name = "weight")
+    @Column(name = "weight", nullable = false)
+    @JsonProperty("weight")
+    @JsonView({OutputEntityJsonView.Detail.class})
     public int getWeight() {
         return weight;
     }
@@ -78,7 +92,9 @@ public class AdminEntity {
     }
 
     @Basic
-    @Column(name = "create_time")
+    @Column(name = "create_time", nullable = false)
+    @JsonProperty("create_time")
+    @JsonView({OutputEntityJsonView.Detail.class})
     public long getCreateTime() {
         return createTime;
     }
@@ -88,7 +104,9 @@ public class AdminEntity {
     }
 
     @Basic
-    @Column(name = "update_time")
+    @Column(name = "update_time", nullable = false)
+    @JsonProperty("update_time")
+    @JsonView({OutputEntityJsonView.Detail.class})
     public long getUpdateTime() {
         return updateTime;
     }
@@ -105,7 +123,7 @@ public class AdminEntity {
         AdminEntity that = (AdminEntity) o;
 
         if (id != that.id) return false;
-        if (auth != that.auth) return false;
+        if (priv != that.priv) return false;
         if (weight != that.weight) return false;
         if (createTime != that.createTime) return false;
         if (updateTime != that.updateTime) return false;
@@ -122,7 +140,7 @@ public class AdminEntity {
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (password != null ? password.hashCode() : 0);
         result = 31 * result + (username != null ? username.hashCode() : 0);
-        result = 31 * result + auth;
+        result = 31 * result + priv;
         result = 31 * result + weight;
         result = 31 * result + (int) (createTime ^ (createTime >>> 32));
         result = 31 * result + (int) (updateTime ^ (updateTime >>> 32));
