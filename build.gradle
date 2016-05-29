@@ -1,0 +1,55 @@
+buildscript {
+    ext {
+        springBootVersion = '1.4.0.M3'
+    }
+    repositories {
+        mavenCentral()
+        maven { url "https://repo.spring.io/snapshot" }
+        maven { url "https://repo.spring.io/milestone" }
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'spring-boot'
+apply plugin: 'war'
+apply plugin: 'idea'
+
+war {
+    baseName = 'home'
+    version = '0.0.1-SNAPSHOT'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    maven { url "https://repo.spring.io/snapshot" }
+    maven { url "https://repo.spring.io/milestone" }
+}
+
+configurations {
+    providedRuntime
+}
+
+dependencies {
+
+    compile('org.springframework.boot:spring-boot-starter-data-rest')
+    compile('org.springframework.boot:spring-boot-devtools')
+    compile('org.springframework.boot:spring-boot-starter-thymeleaf')
+    compile('org.springframework.boot:spring-boot-starter-web')
+    compile('org.springframework.boot:spring-boot-starter-ws')
+    compile('com.google.code.gson:gson:2.6.2')
+    compile('org.apache.commons:commons-lang3:3.4')
+    compile('com.google.guava:guava:19.0')
+    compile('org.springframework.boot:spring-boot-starter-data-jpa')
+
+    runtime('mysql:mysql-connector-java')
+
+    providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
+
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+}

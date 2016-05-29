@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+    "-//Hibernate/Hibernate Configuration DTD//EN"
+    "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+  <session-factory>
+    <property name="connection.url">jdbc:mysql://localhost:3306/sdq</property>
+    <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+    <mapping class="cn.edu.cqupt.wyglzx.entity.AdminEntity"/>
+    <mapping class="cn.edu.cqupt.wyglzx.entity.MeterEntity"/>
+    <mapping class="cn.edu.cqupt.wyglzx.entity.NodeEntity"/>
+    <mapping class="cn.edu.cqupt.wyglzx.entity.RecordEntity"/>
+    <mapping class="cn.edu.cqupt.wyglzx.entity.DepartmentEntity"/>
+    <mapping class="cn.edu.cqupt.wyglzx.entity.MessageEntity"/>
+    <mapping class="cn.edu.cqupt.wyglzx.entity.TimePriceEntity"/>
+    <mapping class="cn.edu.cqupt.wyglzx.entity.UserEntity"/>
+    <mapping class="cn.edu.cqupt.wyglzx.entity.OperationEntity"/>
+    <mapping class="cn.edu.cqupt.wyglzx.entity.SettlementEntity"/>
+    <!-- DB schema will be updated if needed -->
+    <!-- <property name="hbm2ddl.auto">update</property> -->
+  </session-factory>
+</hibernate-configuration>
