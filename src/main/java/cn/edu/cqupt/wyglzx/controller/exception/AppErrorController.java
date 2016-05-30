@@ -29,20 +29,6 @@ public class AppErrorController implements ErrorController {
 
     private static final String PATH_ERROR = "/error";
 
-    /**
-     * Supports the HTML Error View
-     *
-     * @param request model
-     * @return model view
-     */
-    @RequestMapping(value = PATH_ERROR, produces = "text/html")
-    public String errorHtml(HttpServletRequest request, Model model) {
-
-        HttpStatus status = getStatus(request);
-        model.addAttribute("message", status.value() + ": " + status.getReasonPhrase());
-        return "error";
-    }
-
     @RequestMapping(PATH_ERROR)
     public ErrorResponse error(HttpServletRequest request) {
         return new ErrorResponse(BaseException.ERROR, "an error occurred");
