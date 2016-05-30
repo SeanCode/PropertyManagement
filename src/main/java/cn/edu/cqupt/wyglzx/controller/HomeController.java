@@ -23,30 +23,22 @@ public class HomeController {
     AdminService adminService;
 
     @RequestMapping("/")
-    public String defaultRoute(Model model) {
-//        return "login";
+    public String defaultRoute(HttpServletRequest request, Model model) {
         return index(model);
     }
 
     @RequestMapping("/login")
     public String login(HttpServletRequest request, Model model,
-//                        @RequestParam(value = "username", required = false) String userName,
-//                        @RequestParam(value = "password", required = false) String password,
                         @RequestParam Optional<String> error) throws InvalidKeySpecException, NoSuchAlgorithmException {
 
-//        if (StringUtils.isBlank(userName) || StringUtils.isBlank(password)) {
-//            return "login";
-//        }
-//
-//        if (adminService.login(userName, password)) {
-//            System.out.println("登陆成功");
-//            return "redirect:/index";
-//        } else {
-//            model.addAttribute("success", false);
-//        }
         if (error.isPresent()) {
             model.addAttribute("error", error);
         }
+        return "login";
+    }
+
+    @RequestMapping("/logout")
+    public String logout(HttpServletRequest request, Model model) {
         return "login";
     }
 
@@ -55,4 +47,18 @@ public class HomeController {
         return "index";
     }
 
+    @RequestMapping("/profile")
+    public String profile(Model model) {
+        return "profile";
+    }
+
+    @RequestMapping("/people-manage")
+    public String managePeople(Model model) {
+        return "people-manage";
+    }
+
+    @RequestMapping("/company-manage")
+    public String manageCompany(Model model) {
+        return "company-manage";
+    }
 }
