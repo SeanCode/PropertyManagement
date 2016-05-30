@@ -18,7 +18,7 @@ apply plugin: 'war'
 apply plugin: 'idea'
 
 war {
-    baseName = 'home'
+    baseName = 'api'
     version = '0.0.1-SNAPSHOT'
 }
 
