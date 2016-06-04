@@ -1,4 +1,4 @@
-package cn.edu.cqupt.wyglzx.controller.api;
+package cn.edu.cqupt.wyglzx.controller;
 
 import cn.edu.cqupt.wyglzx.common.DataResponse;
 import cn.edu.cqupt.wyglzx.common.OutputEntityJsonView;
@@ -22,6 +22,14 @@ public class AdminApiController {
 
     @Autowired
     AdminService adminService;
+
+    @RequestMapping("/login")
+    @JsonView(OutputEntityJsonView.Detail.class)
+    public DataResponse updatePassword(@RequestParam("name") String name,
+                                       @RequestParam("password") String password) throws InvalidKeySpecException, NoSuchAlgorithmException {
+
+        return new DataResponse().put("admin", adminService.login(name, password));
+    }
 
     @RequestMapping("/password-update")
     @JsonView(OutputEntityJsonView.Basic.class)

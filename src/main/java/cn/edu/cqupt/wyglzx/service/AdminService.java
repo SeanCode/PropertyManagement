@@ -24,9 +24,12 @@ public class AdminService {
     @Autowired
     AdminDao adminDao;
 
-    public boolean login(String name, String password) throws InvalidKeySpecException, NoSuchAlgorithmException {
+    public AdminEntity login(String name, String password) throws InvalidKeySpecException, NoSuchAlgorithmException {
         AdminEntity admin = adminDao.existByName(name);
-        return admin != null && PasswordHash.validatePassword(password, admin.getPassword());
+        if (admin == null || !PasswordHash.validatePassword(password, admin.getPassword())) {
+            throw new WrongPasswordException();
+        }
+        return admin;
     }
 
     public AdminEntity getAdminByName(String name) {

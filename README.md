@@ -1,2 +1,2 @@
 # PropertyManagement
-An website of CQUPT Property Department
+Api program of CQUPT Property Department website and manager pages

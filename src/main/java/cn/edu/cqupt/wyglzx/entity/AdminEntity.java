@@ -1,7 +1,6 @@
 package cn.edu.cqupt.wyglzx.entity;
 
 import cn.edu.cqupt.wyglzx.common.OutputEntityJsonView;
-import cn.edu.cqupt.wyglzx.model.Role;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 
@@ -78,14 +77,6 @@ public class AdminEntity {
 
     public void setPriv(int priv) {
         this.priv = priv;
-    }
-
-    @Transient
-    public Role getRole() {
-        if (this.getPriv() == 5) {
-            return Role.ROOT;
-        }
-        return Role.COMMON;
     }
 
     @Basic
