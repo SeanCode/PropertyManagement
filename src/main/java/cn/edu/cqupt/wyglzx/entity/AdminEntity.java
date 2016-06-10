@@ -22,6 +22,7 @@ public class AdminEntity {
     private long updateTime = 0L;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     @JsonProperty("id")
     @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
@@ -34,7 +35,7 @@ public class AdminEntity {
     }
 
     @Basic
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, length = 99)
     @JsonProperty("name")
     @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public String getName() {
@@ -46,7 +47,7 @@ public class AdminEntity {
     }
 
     @Basic
-    @Column(name = "password", nullable = false)
+    @Column(name = "password", nullable = false, length = 199)
     public String getPassword() {
         return password;
     }
@@ -56,7 +57,7 @@ public class AdminEntity {
     }
 
     @Basic
-    @Column(name = "username", nullable = false)
+    @Column(name = "username", nullable = false, length = 99)
     @JsonProperty("username")
     @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public String getUsername() {

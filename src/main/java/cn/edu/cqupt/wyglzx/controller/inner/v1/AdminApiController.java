@@ -1,4 +1,4 @@
-package cn.edu.cqupt.wyglzx.controller;
+package cn.edu.cqupt.wyglzx.controller.inner.v1;
 
 import cn.edu.cqupt.wyglzx.common.DataResponse;
 import cn.edu.cqupt.wyglzx.common.OutputEntityJsonView;
@@ -17,7 +17,7 @@ import java.security.spec.InvalidKeySpecException;
  * Created by cc on 16/5/29.
  */
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api/private/v1/admin")
 public class AdminApiController {
 
     @Autowired
