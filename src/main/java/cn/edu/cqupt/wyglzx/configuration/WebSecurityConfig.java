@@ -5,6 +5,7 @@ import cn.edu.cqupt.wyglzx.service.AdminDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -27,9 +28,9 @@ public class WebSecurityConfig {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
 
-            http.antMatcher("/api/private/v1/admin/**")
+            http.antMatcher("/api/private/**")
                     .authorizeRequests()
-                    .antMatchers("/api/private/v1/admin/login").permitAll()
+                    .antMatchers(HttpMethod.OPTIONS).permitAll()
                     .anyRequest().authenticated()
                     .and()
                     .csrf().disable()

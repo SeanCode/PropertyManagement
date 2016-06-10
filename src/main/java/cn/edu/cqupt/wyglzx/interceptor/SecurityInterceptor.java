@@ -47,7 +47,10 @@ public class SecurityInterceptor implements HandlerInterceptor
         URI uri = new URI(httpServletRequest.getRequestURI());
         String path = uri.getPath().substring(1);
 
-        httpServletResponse.addHeader("Access-Control-Allow-Origin", "*");
+//        httpServletResponse.setHeader("Access-Control-Allow-Origin", "*");
+//        httpServletResponse.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+//        httpServletResponse.setHeader("Access-Control-Max-Age", "3600");
+//        httpServletResponse.setHeader("Access-Control-Allow-Headers", "x-requested-with");
 
         logger.trace(String.format("path: %s", path));
 
