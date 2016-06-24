@@ -31,6 +31,16 @@ public class AdminApiController {
         return new DataResponse().put("admin", adminService.login(name, password));
     }
 
+    @RequestMapping("/add")
+    @JsonView(OutputEntityJsonView.Basic.class)
+    public DataResponse addAdmin(@RequestParam("name") String name,
+                                 @RequestParam("password") String password,
+                                 @RequestParam(value = "username", required = false, defaultValue = "") String username,
+                                 @RequestParam(value = "privilege", required = false, defaultValue = "0") Integer privilege) throws InvalidKeySpecException, NoSuchAlgorithmException {
+
+        return new DataResponse().put("admin", adminService.addAdmin(name, password, username, privilege));
+    }
+
     @RequestMapping("/password-update")
     @JsonView(OutputEntityJsonView.Basic.class)
     public DataResponse updatePassword(@RequestParam("name") String name,
@@ -56,8 +66,8 @@ public class AdminApiController {
     public DataResponse updateInfoByRoot(@RequestParam("name") String name,
                                          @RequestParam(value = "new_username", required = false) String newUserName,
                                          @RequestParam(value = "new_name", required = false) String newName,
-                                         @RequestParam(value = "new_priv") int newPriv) throws InvalidKeySpecException, NoSuchAlgorithmException {
-        AdminEntity adminEntity = adminService.updateAdminByRoot(name, newUserName, newName, newPriv);
+                                         @RequestParam(value = "new_privilege") int newPrivilege) throws InvalidKeySpecException, NoSuchAlgorithmException {
+        AdminEntity adminEntity = adminService.updateAdminByRoot(name, newUserName, newName, newPrivilege);
 
         return new DataResponse().put("admin", adminEntity);
     }
@@ -67,9 +77,8 @@ public class AdminApiController {
     public DataResponse updateInfo(@RequestParam("name") String name,
                                    @RequestParam("password") String password,
                                    @RequestParam(value = "new_username", required = false) String newUserName,
-                                   @RequestParam(value = "new_name", required = false) String newName,
-                                   @RequestParam(value = "new_priv") int newPriv) throws InvalidKeySpecException, NoSuchAlgorithmException {
-        AdminEntity adminEntity = adminService.updateAdmin(name, password, newUserName, newName, newPriv);
+                                   @RequestParam(value = "new_name", required = false) String newName) throws InvalidKeySpecException, NoSuchAlgorithmException {
+        AdminEntity adminEntity = adminService.updateAdmin(name, password, newUserName, newName);
 
         return new DataResponse().put("admin", adminEntity);
     }

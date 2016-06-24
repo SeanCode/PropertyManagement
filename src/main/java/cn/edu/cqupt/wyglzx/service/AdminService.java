@@ -32,11 +32,7 @@ public class AdminService {
         return admin;
     }
 
-    public AdminEntity getAdminByName(String name) {
-        return adminDao.existByName(name);
-    }
-
-    public AdminEntity addAdmin(String name, String password) throws InvalidKeySpecException, NoSuchAlgorithmException {
+    public AdminEntity addAdmin(String name, String password, String username, Integer privilege) throws InvalidKeySpecException, NoSuchAlgorithmException {
         AdminEntity admin = adminDao.existByName(name);
         if (admin != null) {
             throw new ExistsException();
@@ -44,6 +40,12 @@ public class AdminService {
         admin = new AdminEntity();
         admin.setName(name);
         admin.setPassword(PasswordHash.createHash(password));
+        if (StringUtils.isNotBlank(username)) {
+            admin.setUsername(username);
+        }
+        if (privilege > 0) {
+            admin.setPrivilege(privilege);
+        }
         admin.setCreateTime(Util.time());
         admin.setUpdateTime(admin.getCreateTime());
 
@@ -51,9 +53,9 @@ public class AdminService {
         return admin;
     }
 
-    public AdminEntity updateAdminByRoot(String userName, String newUserName, String newName, int newPriv) throws InvalidKeySpecException, NoSuchAlgorithmException {
+    public AdminEntity updateAdminByRoot(String name, String newUserName, String newName, int newPrivilege) throws InvalidKeySpecException, NoSuchAlgorithmException {
 
-        AdminEntity admin = adminDao.existByName(newName);
+        AdminEntity admin = adminDao.existByName(name);
         if (admin == null) {
             throw new NotExistsException();
         }
@@ -66,8 +68,8 @@ public class AdminService {
         if (StringUtils.isNotBlank(newName)) {
             admin.setName(newName);
         }
-        if (newPriv >= 0) {
-            admin.setPriv(newPriv);
+        if (newPrivilege >= 0) {
+            admin.setPrivilege(newPrivilege);
         }
         admin.setUpdateTime(Util.time());
 
@@ -75,7 +77,7 @@ public class AdminService {
         return admin;
     }
 
-    public AdminEntity updateAdmin(String name, String password, String newUserName, String newName, int newPriv) throws InvalidKeySpecException, NoSuchAlgorithmException {
+    public AdminEntity updateAdmin(String name, String password, String newUserName, String newName) throws InvalidKeySpecException, NoSuchAlgorithmException {
 
         AdminEntity admin = adminDao.existByName(name);
         if (admin == null) {
@@ -92,9 +94,6 @@ public class AdminService {
         }
         if (StringUtils.isNotBlank(newName)) {
             admin.setName(newName);
-        }
-        if (newPriv >= 0) {
-            admin.setPriv(newPriv);
         }
         admin.setUpdateTime(Util.time());
 

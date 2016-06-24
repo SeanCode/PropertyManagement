@@ -11,6 +11,7 @@ public class BaseException extends RuntimeException {
     public static final int ERROR_NOT_EXISTS = 3;
     public static final int ERROR_LOGIN = 4;
     public static final int WRONG_PASSWORD = 5;
+    public static final int INVALID_PARAMS = 6;
 
     private int code;
     private String message;

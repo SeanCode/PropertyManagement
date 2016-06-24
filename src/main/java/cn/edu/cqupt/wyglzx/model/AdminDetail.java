@@ -12,7 +12,7 @@ public class AdminDetail extends User {
     private AdminEntity adminEntity;
 
     public AdminDetail(AdminEntity adminEntity) {
-        super(adminEntity.getName(), adminEntity.getPassword(), AuthorityUtils.createAuthorityList(String.valueOf(adminEntity.getPriv())));
+        super(adminEntity.getName(), adminEntity.getPassword(), AuthorityUtils.createAuthorityList(String.valueOf(adminEntity.getPrivilege())));
         this.adminEntity = adminEntity;
     }
 

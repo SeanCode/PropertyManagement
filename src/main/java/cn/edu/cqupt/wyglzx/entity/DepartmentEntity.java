@@ -7,30 +7,30 @@ import com.fasterxml.jackson.annotation.JsonView;
 import javax.persistence.*;
 
 /**
- * Created by cc on 16/5/28.
+ * Created by cc on 16/6/24.
  */
 @Entity
-@Table(name = "admin", schema = "sdq", catalog = "")
-public class AdminEntity {
-    private long id;
+@Table(name = "department", schema = "sdq", catalog = "")
+public class DepartmentEntity {
+    private int id;
     private String name = "";
-    private String password = "";
-    private String username = "";
-    private int privilege = 0;
+    private int parentId = 0;
+    private long rootId = 0;
+    private int level = 0;
     private int weight = 0;
-    private long createTime = 0L;
-    private long updateTime = 0L;
+    private long createTime = 0;
+    private long updateTime = 0;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     @JsonProperty("id")
     @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -47,37 +47,39 @@ public class AdminEntity {
     }
 
     @Basic
-    @Column(name = "password", nullable = false, length = 199)
-    public String getPassword() {
-        return password;
+    @Column(name = "parent_id", nullable = false)
+    @JsonProperty("parent_id")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    public int getParentId() {
+        return parentId;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setParentId(int parentId) {
+        this.parentId = parentId;
     }
 
     @Basic
-    @Column(name = "username", nullable = false, length = 99)
-    @JsonProperty("username")
+    @Column(name = "root_id", nullable = false)
+    @JsonProperty("root_id")
     @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
-    public String getUsername() {
-        return username;
+    public long getRootId() {
+        return rootId;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setRootId(long rootId) {
+        this.rootId = rootId;
     }
 
     @Basic
-    @Column(name = "privilege", nullable = false)
-    @JsonProperty("privilege")
+    @Column(name = "level", nullable = false)
+    @JsonProperty("level")
     @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
-    public int getPrivilege() {
-        return privilege;
+    public int getLevel() {
+        return level;
     }
 
-    public void setPrivilege(int privilege) {
-        this.privilege = privilege;
+    public void setLevel(int level) {
+        this.level = level;
     }
 
     @Basic
@@ -121,27 +123,27 @@ public class AdminEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        AdminEntity that = (AdminEntity) o;
+        DepartmentEntity that = (DepartmentEntity) o;
 
         if (id != that.id) return false;
-        if (privilege != that.privilege) return false;
+        if (parentId != that.parentId) return false;
+        if (rootId != that.rootId) return false;
+        if (level != that.level) return false;
         if (weight != that.weight) return false;
         if (createTime != that.createTime) return false;
         if (updateTime != that.updateTime) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
-        if (password != null ? !password.equals(that.password) : that.password != null) return false;
-        if (username != null ? !username.equals(that.username) : that.username != null) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
+        int result = id;
         result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (password != null ? password.hashCode() : 0);
-        result = 31 * result + (username != null ? username.hashCode() : 0);
-        result = 31 * result + privilege;
+        result = 31 * result + parentId;
+        result = 31 * result + (int) (rootId ^ (rootId >>> 32));
+        result = 31 * result + level;
         result = 31 * result + weight;
         result = 31 * result + (int) (createTime ^ (createTime >>> 32));
         result = 31 * result + (int) (updateTime ^ (updateTime >>> 32));
