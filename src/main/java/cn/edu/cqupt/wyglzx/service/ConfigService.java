@@ -1,7 +1,5 @@
-package cn.edu.cqupt.wyglzx.controller.inner.v1;
+package cn.edu.cqupt.wyglzx.service;
 
-import cn.edu.cqupt.wyglzx.common.DataResponse;
-import cn.edu.cqupt.wyglzx.common.OutputEntityJsonView;
 import cn.edu.cqupt.wyglzx.common.Util;
 import cn.edu.cqupt.wyglzx.dao.ConfigDao;
 import cn.edu.cqupt.wyglzx.dao.PriceDao;
@@ -10,65 +8,72 @@ import cn.edu.cqupt.wyglzx.entity.PriceEntity;
 import cn.edu.cqupt.wyglzx.exception.InvalidParamsException;
 import cn.edu.cqupt.wyglzx.exception.NotExistsException;
 import cn.edu.cqupt.wyglzx.model.PriceConfig;
-import com.fasterxml.jackson.annotation.JsonView;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Component;
 
 /**
- * Created by cc on 16/6/24.
+ * Created by cc on 16/6/25.
  */
-@RestController
-@RequestMapping("/api/private/v1/config")
-public class ConfigApiController {
+@Component
+public class ConfigService {
 
     @Autowired
     ConfigDao configDao;
     @Autowired
     PriceDao priceDao;
 
-    @RequestMapping("/price")
-    @JsonView(OutputEntityJsonView.Detail.class)
-    public DataResponse getPrice(@RequestParam(name = "year", required = false) Integer year,
-                                 @RequestParam(name = "month", required = false) Integer month) {
+    public PriceConfig getPriceByYearAndMonth(Integer year, Integer month) {
         //return specified price
         if (year != null && year > 0 && month != null && month > 0) {
             PriceEntity priceEntity = priceDao.getPriceByYearAndMonth(year, month);
-            if (priceEntity != null) {
-                PriceConfig config = new PriceConfig();
-                config.setId(0);
-                config.setData("");
-                config.setType(ConfigEntity.TYPE_SPECIAL_PRICE);
-                config.setCreateTime(priceEntity.getCreateTime());
-                config.setUpdateTime(priceEntity.getUpdateTime());
 
-                ConfigEntity.Price price = new ConfigEntity.Price();
-                price.water = priceEntity.getWater();
-                price.ele = priceEntity.getEle();
-                price.gas = priceEntity.getGas();
-
-                config.setPrice(price);
-
-                return new DataResponse().put("config", config);
-            }
+            return PriceConfig.cloneFromPriceEntity(priceEntity);
         }
+
         //return default price
         ConfigEntity config = configDao.getConfigByType(ConfigEntity.TYPE_DEFAULT_PRICE);
         if (config == null) {
             throw new NotExistsException();
         }
 
-
-        return new DataResponse().put("config", PriceConfig.cloneFromConfigEntity(config));
+        return PriceConfig.cloneFromConfigEntity(config);
     }
 
-    @RequestMapping("/price-default-update")
-    @JsonView(OutputEntityJsonView.Detail.class)
-    public DataResponse updateDefaultPrice(@RequestParam(name = "water", required = false) Double water,
-                                           @RequestParam(name = "ele", required = false) Double ele,
-                                           @RequestParam(name = "gas", required = false) Double gas) {
+    public PriceConfig savePrice(Integer year, Integer month, Double water, Double ele, Double gas) {
+        if (year != null && year > 0 && month != null && month > 0) {
+            PriceEntity priceEntity = priceDao.getPriceByYearAndMonth(year, month);
+            if (priceEntity == null) {
+                priceEntity = new PriceEntity();
+                priceEntity.setYear(year);
+                priceEntity.setMonth(month);
+                priceEntity.setCreateTime(Util.time());
+                priceEntity.setUpdateTime(priceEntity.getUpdateTime());
+            }
+            boolean flag = false;
+            if (water != null && water > 0) {
+                priceEntity.setWater(water);
+                flag = true;
+            }
+            if (ele != null && ele > 0) {
+                priceEntity.setEle(ele);
+                flag = true;
+            }
+            if (gas != null && gas > 0) {
+                priceEntity.setGas(gas);
+                flag = true;
+            }
+            if (flag) {
+                priceEntity.setUpdateTime(Util.time());
+                priceEntity = priceDao.save(priceEntity);
+                return PriceConfig.cloneFromPriceEntity(priceEntity);
+            }
+        }
+
+        throw new InvalidParamsException();
+    }
+
+    public PriceConfig updateDefaultPrice(Double water, Double ele, Double gas) {
 
         if ((water != null && water > 0) || (ele != null && ele > 0) || (gas != null && gas > 0)) {
             ConfigEntity config = configDao.getConfigByType(ConfigEntity.TYPE_DEFAULT_PRICE);
@@ -106,12 +111,11 @@ public class ConfigApiController {
                 configDao.save(config);
             }
 
-            return new DataResponse().put("config", PriceConfig.cloneFromConfigEntity(config));
+            return PriceConfig.cloneFromConfigEntity(config);
 
         } else {
             throw new InvalidParamsException();
         }
-
     }
 
 }

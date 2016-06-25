@@ -18,7 +18,7 @@ import java.security.spec.InvalidKeySpecException;
  */
 @RestController
 @RequestMapping("/api/private/v1/admin")
-public class AdminApiController {
+public class AdminController {
 
     @Autowired
     AdminService adminService;

@@ -3,6 +3,7 @@ package cn.edu.cqupt.wyglzx.model;
 import cn.edu.cqupt.wyglzx.common.Config;
 import cn.edu.cqupt.wyglzx.common.OutputEntityJsonView;
 import cn.edu.cqupt.wyglzx.entity.ConfigEntity;
+import cn.edu.cqupt.wyglzx.entity.PriceEntity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.google.gson.Gson;
@@ -40,6 +41,26 @@ public class PriceConfig extends ConfigEntity {
             priceConfig.setPrice(price);
         }
         return priceConfig;
+    }
+
+    public static PriceConfig cloneFromPriceEntity(PriceEntity priceEntity) {
+        PriceConfig config = new PriceConfig();
+        if (priceEntity != null) {
+            config.setId(priceEntity.getId());
+            config.setData("");
+            config.setType(ConfigEntity.TYPE_SPECIAL_PRICE);
+            config.setCreateTime(priceEntity.getCreateTime());
+            config.setUpdateTime(priceEntity.getUpdateTime());
+
+            ConfigEntity.Price price = new ConfigEntity.Price();
+            price.water = priceEntity.getWater();
+            price.ele = priceEntity.getEle();
+            price.gas = priceEntity.getGas();
+
+            config.setPrice(price);
+        }
+
+        return config;
     }
 
 }
