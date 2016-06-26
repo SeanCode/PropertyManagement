@@ -10,12 +10,13 @@ import javax.persistence.*;
  * Created by cc on 16/6/25.
  */
 @Entity
-@Table(name = "node_user", schema = "sdq", catalog = "")
-public class NodeUserEntity {
+@Table(name = "node_owner", schema = "sdq", catalog = "")
+public class NodeOwnerEntity {
 
     private long id;
     private long nodeId = 0;
-    private long userId = 0;
+    private long ownerId = 0;
+    private int ownerType = 0;
     private int status = 0;
     private int weight = 0;
     private long createTime = 0;
@@ -47,15 +48,23 @@ public class NodeUserEntity {
     }
 
     @Basic
-    @Column(name = "user_id", nullable = false)
-    @JsonProperty("user_id")
-    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
-    public long getUserId() {
-        return userId;
+    @Column(name = "owner_id", nullable = false)
+    public long getOwnerId() {
+        return ownerId;
     }
 
-    public void setUserId(long userId) {
-        this.userId = userId;
+    public void setOwnerId(long ownerId) {
+        this.ownerId = ownerId;
+    }
+
+    @Basic
+    @Column(name = "owner_type", nullable = false)
+    public int getOwnerType() {
+        return ownerType;
+    }
+
+    public void setOwnerType(int ownerType) {
+        this.ownerType = ownerType;
     }
 
     @Basic
@@ -111,11 +120,12 @@ public class NodeUserEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        NodeUserEntity that = (NodeUserEntity) o;
+        NodeOwnerEntity that = (NodeOwnerEntity) o;
 
         if (id != that.id) return false;
         if (nodeId != that.nodeId) return false;
-        if (userId != that.userId) return false;
+        if (ownerId != that.ownerId) return false;
+        if (ownerType != that.ownerType) return false;
         if (status != that.status) return false;
         if (weight != that.weight) return false;
         if (createTime != that.createTime) return false;
@@ -128,7 +138,8 @@ public class NodeUserEntity {
     public int hashCode() {
         int result = (int) (id ^ (id >>> 32));
         result = 31 * result + (int) (nodeId ^ (nodeId >>> 32));
-        result = 31 * result + (int) (userId ^ (userId >>> 32));
+        result = 31 * result + (int) (ownerId ^ (ownerId >>> 32));
+        result = 31 * result + ownerType;
         result = 31 * result + status;
         result = 31 * result + weight;
         result = 31 * result + (int) (createTime ^ (createTime >>> 32));

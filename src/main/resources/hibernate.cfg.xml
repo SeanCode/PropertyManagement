@@ -18,7 +18,8 @@
     <mapping class="cn.edu.cqupt.wyglzx.entity.ActionEntity"/>
     <mapping class="cn.edu.cqupt.wyglzx.entity.PriceEntity"/>
     <mapping class="cn.edu.cqupt.wyglzx.entity.RentEntity"/>
-    <mapping class="cn.edu.cqupt.wyglzx.entity.NodeUserEntity"/>
+    <mapping class="cn.edu.cqupt.wyglzx.entity.NodeOwnerEntity"/>
+    <mapping class="cn.edu.cqupt.wyglzx.entity.InstitutionEntity"/>
     <!-- DB schema will be updated if needed -->
     <!-- <property name="hbm2ddl.auto">update</property> -->
   </session-factory>

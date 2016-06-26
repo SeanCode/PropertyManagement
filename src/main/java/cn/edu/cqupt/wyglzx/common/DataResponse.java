@@ -10,24 +10,21 @@ public class DataResponse {
     private int code;
     private Map<String, Object> data;
 
-    public DataResponse()
-    {
+    public DataResponse() {
         this(0);
     }
 
-    public DataResponse(int code)
-    {
+    public DataResponse(int code) {
         this.code = code;
         this.data = new HashMap<String, Object>();
     }
 
-    public DataResponse put(String key, Object object)
-    {
+    public DataResponse put(String key, Object object) {
         this.data.put(key, object);
         return this;
     }
 
-    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Tree.class, OutputEntityJsonView.Detail.class})
     public int getCode() {
         return code;
     }
@@ -36,7 +33,7 @@ public class DataResponse {
         this.code = code;
     }
 
-    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Tree.class, OutputEntityJsonView.Detail.class})
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public Map<String, Object> getData() {
         return data;

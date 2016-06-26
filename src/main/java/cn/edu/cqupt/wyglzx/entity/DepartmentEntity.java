@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by cc on 16/6/24.
@@ -12,32 +14,38 @@ import javax.persistence.*;
 @Entity
 @Table(name = "department", schema = "sdq", catalog = "")
 public class DepartmentEntity {
-    private int id;
+
+    private Long id;
     private String name = "";
-    private int parentId = 0;
-    private long rootId = 0;
-    private int level = 0;
-    private int weight = 0;
-    private long createTime = 0;
-    private long updateTime = 0;
+    private Long parentId = 0L;
+    private Long rootId = 0L;
+    private Integer level = 0;
+    private Integer weight = 0;
+    private Long createTime = 0L;
+    private Long updateTime = 0L;
+
+    private List<UserEntity> userList;
+    private List<DepartmentEntity> children;
+
+    private boolean isParent = true;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     @JsonProperty("id")
-    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
-    public int getId() {
+    @JsonView({OutputEntityJsonView.Tree.class, OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
     @Basic
     @Column(name = "name", nullable = false, length = 99)
     @JsonProperty("name")
-    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Tree.class, OutputEntityJsonView.Detail.class})
     public String getName() {
         return name;
     }
@@ -49,72 +57,110 @@ public class DepartmentEntity {
     @Basic
     @Column(name = "parent_id", nullable = false)
     @JsonProperty("parent_id")
-    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
-    public int getParentId() {
+    @JsonView({OutputEntityJsonView.Tree.class, OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    public Long getParentId() {
         return parentId;
     }
 
-    public void setParentId(int parentId) {
+    public void setParentId(Long parentId) {
         this.parentId = parentId;
     }
 
     @Basic
     @Column(name = "root_id", nullable = false)
     @JsonProperty("root_id")
-    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
-    public long getRootId() {
+    @JsonView({OutputEntityJsonView.Tree.class, OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    public Long getRootId() {
+
+        if (this.getLevel() == 0) {
+            return this.id == null ? 0L : this.id;
+        }
+
         return rootId;
     }
 
-    public void setRootId(long rootId) {
+    public void setRootId(Long rootId) {
         this.rootId = rootId;
     }
 
     @Basic
     @Column(name = "level", nullable = false)
     @JsonProperty("level")
-    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
-    public int getLevel() {
+    @JsonView({OutputEntityJsonView.Tree.class, OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    public Integer getLevel() {
         return level;
     }
 
-    public void setLevel(int level) {
+    public void setLevel(Integer level) {
         this.level = level;
+    }
+
+    @Transient
+    @JsonProperty("user_list")
+    @JsonView({OutputEntityJsonView.Tree.class})
+    public List<UserEntity> getUserList() {
+        return userList == null ? new ArrayList<>() : userList;
+    }
+
+    public void setUserList(List<UserEntity> userList) {
+        this.userList = userList;
+    }
+
+    @Transient
+    @JsonProperty("children")
+    @JsonView({OutputEntityJsonView.Tree.class})
+    public List<DepartmentEntity> getChildren() {
+        return children == null ? new ArrayList<>() : children;
+    }
+
+    public void setChildren(List<DepartmentEntity> children) {
+        this.children = children;
+    }
+
+    @Transient
+    @JsonProperty("isParent")
+    @JsonView({OutputEntityJsonView.Tree.class})
+    public boolean isParent() {
+        return isParent;
+    }
+
+    public void setParent(boolean parent) {
+        isParent = parent;
     }
 
     @Basic
     @Column(name = "weight", nullable = false)
     @JsonProperty("weight")
-    @JsonView({OutputEntityJsonView.Detail.class})
-    public int getWeight() {
+    @JsonView({OutputEntityJsonView.Tree.class, OutputEntityJsonView.Detail.class})
+    public Integer getWeight() {
         return weight;
     }
 
-    public void setWeight(int weight) {
+    public void setWeight(Integer weight) {
         this.weight = weight;
     }
 
     @Basic
     @Column(name = "create_time", nullable = false)
     @JsonProperty("create_time")
-    @JsonView({OutputEntityJsonView.Detail.class})
-    public long getCreateTime() {
+    @JsonView({OutputEntityJsonView.Tree.class, OutputEntityJsonView.Detail.class})
+    public Long getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(long createTime) {
+    public void setCreateTime(Long createTime) {
         this.createTime = createTime;
     }
 
     @Basic
     @Column(name = "update_time", nullable = false)
     @JsonProperty("update_time")
-    @JsonView({OutputEntityJsonView.Detail.class})
-    public long getUpdateTime() {
+    @JsonView({OutputEntityJsonView.Tree.class, OutputEntityJsonView.Detail.class})
+    public Long getUpdateTime() {
         return updateTime;
     }
 
-    public void setUpdateTime(long updateTime) {
+    public void setUpdateTime(Long updateTime) {
         this.updateTime = updateTime;
     }
 
@@ -125,28 +171,28 @@ public class DepartmentEntity {
 
         DepartmentEntity that = (DepartmentEntity) o;
 
-        if (id != that.id) return false;
-        if (parentId != that.parentId) return false;
-        if (rootId != that.rootId) return false;
-        if (level != that.level) return false;
-        if (weight != that.weight) return false;
-        if (createTime != that.createTime) return false;
-        if (updateTime != that.updateTime) return false;
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (parentId != null ? !parentId.equals(that.parentId) : that.parentId != null) return false;
+        if (rootId != null ? !rootId.equals(that.rootId) : that.rootId != null) return false;
+        if (level != null ? !level.equals(that.level) : that.level != null) return false;
+        if (weight != null ? !weight.equals(that.weight) : that.weight != null) return false;
+        if (createTime != null ? !createTime.equals(that.createTime) : that.createTime != null) return false;
 
-        return true;
+        return updateTime != null ? !updateTime.equals(that.updateTime) : that.updateTime != null;
+
     }
 
     @Override
     public int hashCode() {
-        int result = id;
+        int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + parentId;
-        result = 31 * result + (int) (rootId ^ (rootId >>> 32));
-        result = 31 * result + level;
-        result = 31 * result + weight;
-        result = 31 * result + (int) (createTime ^ (createTime >>> 32));
-        result = 31 * result + (int) (updateTime ^ (updateTime >>> 32));
+        result = 31 * result + (parentId != null ? parentId.hashCode() : 0);
+        result = 31 * result + (rootId != null ? rootId.hashCode() : 0);
+        result = 31 * result + (level != null ? level.hashCode() : 0);
+        result = 31 * result + (weight != null ? weight.hashCode() : 0);
+        result = 31 * result + (createTime != null ? createTime.hashCode() : 0);
+        result = 31 * result + (updateTime != null ? updateTime.hashCode() : 0);
         return result;
     }
 }

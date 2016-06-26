@@ -8,4 +8,8 @@ public class InvalidParamsException extends BaseException {
     public InvalidParamsException() {
         super(INVALID_PARAMS, "invalid params");
     }
+
+    public InvalidParamsException(String param) {
+        super(INVALID_PARAMS, "invalid params: " + param);
+    }
 }

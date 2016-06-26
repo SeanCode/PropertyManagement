@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Created by cc on 16/6/25.
  */
 @RestController
-@RequestMapping("/api/private/v1/node-user")
-public class NodeUserController {
+@RequestMapping("/api/private/v1/node-owner")
+public class NodeOwnerController {
 
 }

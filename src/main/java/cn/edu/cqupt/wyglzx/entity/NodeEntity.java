@@ -5,12 +5,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by cc on 16/6/24.
  */
 @Entity
-@javax.persistence.Table(name = "node", schema = "sdq", catalog = "")
+@Table(name = "node", schema = "sdq", catalog = "")
 public class NodeEntity {
 
     private long id;
@@ -31,11 +33,18 @@ public class NodeEntity {
     private long createTime = 0;
     private long updateTime = 0;
 
+    public static final int TYPE_NORMAL = 1;
+    public static final int TYPE_ROOM = 2;
+    public static final int TYPE_INSTITUTION = 3;
+
+    private List<NodeEntity> children;
+    private boolean isParent = true; //temp true
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     @JsonProperty("id")
-    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    @JsonView({OutputEntityJsonView.Tree.class, OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public long getId() {
         return id;
     }
@@ -47,7 +56,7 @@ public class NodeEntity {
     @Basic
     @Column(name = "name", nullable = false, length = 99)
     @JsonProperty("name")
-    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    @JsonView({OutputEntityJsonView.Tree.class, OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public String getName() {
         return name;
     }
@@ -59,7 +68,7 @@ public class NodeEntity {
     @Basic
     @Column(name = "parent_id", nullable = false)
     @JsonProperty("parent_id")
-    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    @JsonView({OutputEntityJsonView.Tree.class, OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public long getParentId() {
         return parentId;
     }
@@ -71,7 +80,7 @@ public class NodeEntity {
     @Basic
     @Column(name = "root_id", nullable = false)
     @JsonProperty("root_id")
-    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    @JsonView({OutputEntityJsonView.Tree.class, OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public long getRootId() {
         return rootId;
     }
@@ -83,7 +92,7 @@ public class NodeEntity {
     @Basic
     @Column(name = "level", nullable = false)
     @JsonProperty("level")
-    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    @JsonView({OutputEntityJsonView.Tree.class, OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public int getLevel() {
         return level;
     }
@@ -95,7 +104,7 @@ public class NodeEntity {
     @Basic
     @Column(name = "code", nullable = false, length = 255)
     @JsonProperty("code")
-    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    @JsonView({OutputEntityJsonView.Tree.class, OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public String getCode() {
         return code;
     }
@@ -107,7 +116,7 @@ public class NodeEntity {
     @Basic
     @Column(name = "path", nullable = false, length = 99)
     @JsonProperty("path")
-    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    @JsonView({OutputEntityJsonView.Tree.class, OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public String getPath() {
         return path;
     }
@@ -119,7 +128,7 @@ public class NodeEntity {
     @Basic
     @Column(name = "type", nullable = false)
     @JsonProperty("type")
-    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    @JsonView({OutputEntityJsonView.Tree.class, OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public int getType() {
         return type;
     }
@@ -131,7 +140,7 @@ public class NodeEntity {
     @Basic
     @Column(name = "area", nullable = false, precision = 0)
     @JsonProperty("area")
-    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    @JsonView({OutputEntityJsonView.Tree.class, OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public double getArea() {
         return area;
     }
@@ -143,7 +152,7 @@ public class NodeEntity {
     @Basic
     @Column(name = "price", nullable = false, precision = 0)
     @JsonProperty("price")
-    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    @JsonView({OutputEntityJsonView.Tree.class, OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public double getPrice() {
         return price;
     }
@@ -155,7 +164,7 @@ public class NodeEntity {
     @Basic
     @Column(name = "fee", nullable = false, precision = 0)
     @JsonProperty("fee")
-    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    @JsonView({OutputEntityJsonView.Tree.class, OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public double getFee() {
         return fee;
     }
@@ -167,7 +176,7 @@ public class NodeEntity {
     @Basic
     @Column(name = "ownership", nullable = false, length = 99)
     @JsonProperty("ownership")
-    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    @JsonView({OutputEntityJsonView.Tree.class, OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public String getOwnership() {
         return ownership;
     }
@@ -191,7 +200,7 @@ public class NodeEntity {
     @Basic
     @Column(name = "remark", nullable = false, length = -1)
     @JsonProperty("remark")
-    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    @JsonView({OutputEntityJsonView.Tree.class, OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public String getRemark() {
         return remark;
     }
@@ -200,10 +209,32 @@ public class NodeEntity {
         this.remark = remark;
     }
 
+    @Transient
+    @JsonProperty("children")
+    @JsonView({OutputEntityJsonView.Tree.class})
+    public List<NodeEntity> getChildren() {
+        return children == null ? new ArrayList<>() : children;
+    }
+
+    public void setChildren(List<NodeEntity> children) {
+        this.children = children;
+    }
+
+    @Transient
+    @JsonProperty("isParent")
+    @JsonView({OutputEntityJsonView.Tree.class})
+    public boolean isParent() {
+        return isParent;
+    }
+
+    public void setParent(boolean parent) {
+        isParent = parent;
+    }
+
     @Basic
     @Column(name = "weight", nullable = false)
     @JsonProperty("weight")
-    @JsonView({OutputEntityJsonView.Detail.class})
+    @JsonView({OutputEntityJsonView.Tree.class, OutputEntityJsonView.Detail.class})
     public int getWeight() {
         return weight;
     }
@@ -215,7 +246,7 @@ public class NodeEntity {
     @Basic
     @Column(name = "create_time", nullable = false)
     @JsonProperty("create_time")
-    @JsonView({OutputEntityJsonView.Detail.class})
+    @JsonView({OutputEntityJsonView.Tree.class, OutputEntityJsonView.Detail.class})
     public long getCreateTime() {
         return createTime;
     }
@@ -227,7 +258,7 @@ public class NodeEntity {
     @Basic
     @Column(name = "update_time", nullable = false)
     @JsonProperty("update_time")
-    @JsonView({OutputEntityJsonView.Detail.class})
+    @JsonView({OutputEntityJsonView.Tree.class, OutputEntityJsonView.Detail.class})
     public long getUpdateTime() {
         return updateTime;
     }
