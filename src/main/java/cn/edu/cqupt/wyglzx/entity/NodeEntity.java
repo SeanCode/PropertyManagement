@@ -39,6 +39,7 @@ public class NodeEntity {
 
     private List<NodeEntity> children;
     private boolean isParent = true; //temp true
+    private String typeName;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -135,6 +136,31 @@ public class NodeEntity {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    @Transient
+    @JsonProperty("type_name")
+    @JsonView({OutputEntityJsonView.Tree.class, OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    public String getTypeName() {
+        switch (type) {
+            case TYPE_NORMAL:
+                typeName = "一般";
+                break;
+            case TYPE_ROOM:
+                typeName = "房间";
+                break;
+            case TYPE_INSTITUTION:
+                typeName = "机构";
+                break;
+            default:
+                typeName = "其他";
+                break;
+        }
+        return typeName;
+    }
+
+    public void setTypeName(String typeName) {
+        this.typeName = typeName;
     }
 
     @Basic

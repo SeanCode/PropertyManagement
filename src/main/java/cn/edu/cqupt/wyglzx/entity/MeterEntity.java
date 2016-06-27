@@ -19,7 +19,7 @@ public class MeterEntity {
     private String name = "";
     private long parentId = 0;
     private int type = 0;
-    private double rate = 0.00;
+    private double rate = 1.00;
     private double begin = 0.00;
     private String nameplate = "";
     private String manufacturers = "";
@@ -32,6 +32,20 @@ public class MeterEntity {
     private int weight = 0;
     private long createTime = 0;
     private long updateTime = 0;
+
+    public static final int TYPE_WATER = 1;
+    public static final int TYPE_ELE = 2;
+    public static final int TYPE_GAS = 3;
+    public static final int TYPE_CHECK_WATER = 4;
+    public static final int TYPE_CHECK_ELE = 5;
+    public static final int TYPE_CHECK_GAS = 6;
+
+    public static final int STATUS_VALID = 0;
+    public static final int STATUS_INVALID = -1;
+
+    private String typeName;
+
+    private MeterEntity parent;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -106,6 +120,17 @@ public class MeterEntity {
         this.parentId = parentId;
     }
 
+    @Transient
+    @JsonProperty("parent")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    public MeterEntity getParent() {
+        return parent;
+    }
+
+    public void setParent(MeterEntity parent) {
+        this.parent = parent;
+    }
+
     @Basic
     @Column(name = "type", nullable = false)
     @JsonProperty("type")
@@ -116,6 +141,40 @@ public class MeterEntity {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    @Transient
+    @JsonProperty("type_name")
+    @JsonView({OutputEntityJsonView.Tree.class, OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    public String getTypeName() {
+        switch (type) {
+            case TYPE_WATER:
+                typeName = "水表";
+                break;
+            case TYPE_ELE:
+                typeName = "电表";
+                break;
+            case TYPE_GAS:
+                typeName = "气表";
+                break;
+            case TYPE_CHECK_WATER:
+                typeName = "水表检查表";
+                break;
+            case TYPE_CHECK_ELE:
+                typeName = "电表检查表";
+                break;
+            case TYPE_CHECK_GAS:
+                typeName = "气表检查表";
+                break;
+            default:
+                typeName = "其他";
+                break;
+        }
+        return typeName;
+    }
+
+    public void setTypeName(String typeName) {
+        this.typeName = typeName;
     }
 
     @Basic
