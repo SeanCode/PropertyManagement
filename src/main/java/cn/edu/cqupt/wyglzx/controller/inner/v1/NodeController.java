@@ -21,9 +21,9 @@ public class NodeController {
 
     @RequestMapping("/children")
     @JsonView(OutputEntityJsonView.Tree.class)
-    public DataResponse getNodeChildren(@RequestParam("id") Long parentId) {
+    public DataResponse getNodeChildren(@RequestParam("id") Long parentId, @RequestParam(name = "type", required = false, defaultValue = "0") Integer type) {
 
-        return new DataResponse().put("children", nodeService.getNodeChildren(parentId));
+        return new DataResponse().put("children", nodeService.getNodeChildren(parentId, type));
     }
 
     @RequestMapping("/tree-root")

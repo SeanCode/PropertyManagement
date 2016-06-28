@@ -22,6 +22,16 @@ public class NodeOwnerEntity {
     private long createTime = 0;
     private long updateTime = 0;
 
+    public static final int STATUS_VALID = 0;
+    public static final int STATUS_INVALID = -1;
+
+    public static final int OWNER_TYPE_USER = 1;
+    public static final int OWNER_TYPE_INSTITUTION = 2;
+
+    private NodeEntity node;
+    private InstitutionEntity institution;
+    private UserEntity user;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -49,6 +59,8 @@ public class NodeOwnerEntity {
 
     @Basic
     @Column(name = "owner_id", nullable = false)
+    @JsonProperty("owner_id")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public long getOwnerId() {
         return ownerId;
     }
@@ -59,12 +71,47 @@ public class NodeOwnerEntity {
 
     @Basic
     @Column(name = "owner_type", nullable = false)
+    @JsonProperty("owner_type")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public int getOwnerType() {
         return ownerType;
     }
 
     public void setOwnerType(int ownerType) {
         this.ownerType = ownerType;
+    }
+
+    @Transient
+    @JsonProperty("node")
+    @JsonView({OutputEntityJsonView.Detail.class})
+    public NodeEntity getNode() {
+        return node;
+    }
+
+    public void setNode(NodeEntity node) {
+        this.node = node;
+    }
+
+    @Transient
+    @JsonProperty("institution")
+    @JsonView({OutputEntityJsonView.Detail.class})
+    public InstitutionEntity getInstitution() {
+        return institution;
+    }
+
+    public void setInstitution(InstitutionEntity institution) {
+        this.institution = institution;
+    }
+
+    @Transient
+    @JsonProperty("user")
+    @JsonView({OutputEntityJsonView.Detail.class})
+    public UserEntity getUser() {
+        return user;
+    }
+
+    public void setUser(UserEntity user) {
+        this.user = user;
     }
 
     @Basic

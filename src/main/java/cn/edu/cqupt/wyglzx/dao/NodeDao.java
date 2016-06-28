@@ -21,4 +21,10 @@ public interface NodeDao extends JpaRepository<NodeEntity, Long> {
     @Query(value = "select * from node where parent_id = :parent_id and weight >= 0", nativeQuery = true)
     List<NodeEntity> getNodeListByParentId(@Param("parent_id") Long parentId);
 
+    @Query(value = "select * from node where parent_id = :parent_id and type != 3 and weight >= 0", nativeQuery = true)
+    List<NodeEntity> getNodeRoomListByParentId(@Param("parent_id") Long parentId);
+
+    @Query(value = "select * from node where parent_id = :parent_id and type != 2 and weight >= 0", nativeQuery = true)
+    List<NodeEntity> getNodeInstitutionListByParentId(@Param("parent_id") Long parentId);
+
 }

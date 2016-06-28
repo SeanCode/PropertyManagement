@@ -14,7 +14,10 @@ import java.util.List;
 @Repository
 public interface UserDao extends JpaRepository<UserEntity, Long> {
 
-    @Query(name = "select * from user where department_id = :department_id and weight >= 0", nativeQuery = true)
+    @Query(value = "select * from user where department_id = :department_id and weight >= 0", nativeQuery = true)
     List<UserEntity> getUserListByDepartmentId(@Param("department_id") Long departmentId);
+
+    @Query(value = "select * from user where id = :id and weight >= 0", nativeQuery = true)
+    UserEntity getUserById(@Param("id") Long id);
 
 }

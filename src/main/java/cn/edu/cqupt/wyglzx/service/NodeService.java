@@ -25,13 +25,15 @@ public class NodeService {
         return nodeEntity;
     }
 
-    public List<NodeEntity> getNodeChildren(Long parentId) {
-
-//        NodeEntity parent = checkNodeById(parentId);
-//
-//        parent.setChildren(nodeDao.getNodeListByParentId(parentId));
-
-        return nodeDao.getNodeListByParentId(parentId);
+    public List<NodeEntity> getNodeChildren(Long parentId, Integer type) {
+        switch (type) {
+            case NodeEntity.TYPE_ROOM:
+                return nodeDao.getNodeRoomListByParentId(parentId);
+            case NodeEntity.TYPE_INSTITUTION:
+                return nodeDao.getNodeInstitutionListByParentId(parentId);
+            default:
+                return nodeDao.getNodeListByParentId(parentId);
+        }
     }
 
     public NodeEntity getNodeTreeRoot() {
