@@ -59,4 +59,11 @@ public class InstitutionController {
         return new DataResponse();
     }
 
+    @RequestMapping("/detail")
+    @JsonView(OutputEntityJsonView.Detail.class)
+    public DataResponse getDetail(@RequestParam("id") Long id) {
+
+        return new DataResponse().put("institution", institutionService.getDetail(id));
+    }
+
 }

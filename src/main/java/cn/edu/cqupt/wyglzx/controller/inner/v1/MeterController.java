@@ -40,41 +40,58 @@ public class MeterController {
         return new DataResponse().put("meter_children", meterService.getNodeChildrenMeter(nodeId));
     }
 
-    @RequestMapping("/add")
+    @RequestMapping("/add-normal")
     @JsonView(OutputEntityJsonView.Detail.class)
-    public DataResponse addMeter(@RequestParam("name") String name,
-                                 @RequestParam("node_id") Long nodeId,
-                                 @RequestParam(value = "code", required = false) String code,
-                                 @RequestParam("type") Integer type,
-                                 @RequestParam(value = "rate", required = false, defaultValue = "1") Integer rate,
-                                 @RequestParam(value = "begin", required = false, defaultValue = "0") Double begin,
-                                 @RequestParam(value = "nameplate", required = false) String nameplate,
-                                 @RequestParam(value = "manufacturers", required = false) String manufacturers,
-                                 @RequestParam(value = "purchaser", required = false) String purchaser,
-                                 @RequestParam(value = "cost", required = false, defaultValue = "0") Double cost,
-                                 @RequestParam(value = "buy_time", required = false, defaultValue = "0") Long buyTime,
-                                 @RequestParam(value = "product_time", required = false, defaultValue = "0") Long productTime,
-                                 @RequestParam(value = "remark", required = false) String remark) {
+    public DataResponse addNormalMeter(@RequestParam("name") String name,
+                                       @RequestParam("node_id") Long nodeId,
+                                       @RequestParam(value = "code", required = false, defaultValue = "") String code,
+                                       @RequestParam("type") Integer type,
+                                       @RequestParam(value = "rate", required = false, defaultValue = "1") Integer rate,
+                                       @RequestParam(value = "begin", required = false, defaultValue = "0") Double begin,
+                                       @RequestParam(value = "nameplate", required = false, defaultValue = "") String nameplate,
+                                       @RequestParam(value = "manufacturers", required = false, defaultValue = "") String manufacturers,
+                                       @RequestParam(value = "purchaser", required = false, defaultValue = "") String purchaser,
+                                       @RequestParam(value = "cost", required = false, defaultValue = "0") Double cost,
+                                       @RequestParam(value = "buy_time", required = false, defaultValue = "0") Long buyTime,
+                                       @RequestParam(value = "product_time", required = false, defaultValue = "0") Long productTime,
+                                       @RequestParam(value = "remark", required = false, defaultValue = "") String remark) {
 
-        return new DataResponse().put("meter", meterService.addMeter(name, nodeId, code, type, rate, begin, nameplate, manufacturers, purchaser, cost, buyTime, productTime, remark));
+        return new DataResponse().put("meter", meterService.addNormalMeter(name, nodeId, code, type, rate, begin, nameplate, manufacturers, purchaser, cost, buyTime, productTime, remark));
+    }
+
+    @RequestMapping("/add-check")
+    @JsonView(OutputEntityJsonView.Detail.class)
+    public DataResponse addCheckMeter(@RequestParam("name") String name,
+                                      @RequestParam(value = "code", required = false, defaultValue = "") String code,
+                                      @RequestParam("type") Integer type,
+                                      @RequestParam("parent_id") Long parentId,
+                                      @RequestParam(value = "rate", required = false, defaultValue = "1") Integer rate,
+                                      @RequestParam(value = "begin", required = false, defaultValue = "0") Double begin,
+                                      @RequestParam(value = "nameplate", required = false, defaultValue = "") String nameplate,
+                                      @RequestParam(value = "manufacturers", required = false, defaultValue = "") String manufacturers,
+                                      @RequestParam(value = "purchaser", required = false, defaultValue = "") String purchaser,
+                                      @RequestParam(value = "cost", required = false, defaultValue = "0") Double cost,
+                                      @RequestParam(value = "buy_time", required = false, defaultValue = "0") Long buyTime,
+                                      @RequestParam(value = "product_time", required = false, defaultValue = "0") Long productTime,
+                                      @RequestParam(value = "remark", required = false, defaultValue = "") String remark) {
+
+        return new DataResponse().put("meter", meterService.addCheckMeter(name, code, type, parentId, rate, begin, nameplate, manufacturers, purchaser, cost, buyTime, productTime, remark));
     }
 
     @RequestMapping("/info-update")
     @JsonView(OutputEntityJsonView.Detail.class)
     public DataResponse updateMeterInfo(@RequestParam("id") Long id,
-                                        @RequestParam("name") String name,
-                                        @RequestParam(value = "code", required = false) String code,
-                                        @RequestParam("type") Integer type,
-                                        @RequestParam(value = "rate", required = false, defaultValue = "1") Integer rate,
-                                        @RequestParam(value = "begin", required = false, defaultValue = "0") Double begin,
-                                        @RequestParam(value = "nameplate", required = false) String nameplate,
-                                        @RequestParam(value = "manufacturers", required = false) String manufacturers,
-                                        @RequestParam(value = "purchaser", required = false) String purchaser,
-                                        @RequestParam(value = "cost", required = false, defaultValue = "0") Double cost,
-                                        @RequestParam(value = "buy_time", required = false, defaultValue = "0") Long buyTime,
-                                        @RequestParam(value = "product_time", required = false, defaultValue = "0") Long productTime,
-                                        @RequestParam(value = "remark", required = false) String remark) {
-        return new DataResponse().put("meter", meterService.updateMeter(id, name, code, type, rate, begin, nameplate, manufacturers, purchaser, cost, buyTime, productTime, remark));
+                                        @RequestParam(value = "name", required = false, defaultValue = "") String name,
+                                        @RequestParam(value = "code", required = false, defaultValue = "") String code,
+                                        @RequestParam(value = "remark", required = false, defaultValue = "") String remark) {
+        return new DataResponse().put("meter", meterService.updateMeter(id, name, code, remark));
+    }
+
+    @RequestMapping("/detail")
+    @JsonView(OutputEntityJsonView.Detail.class)
+    public DataResponse getMeterDetail(@RequestParam("id") Long id) {
+
+        return new DataResponse().put("meter", meterService.getMeterDetail(id));
     }
 
     @RequestMapping("/remove")

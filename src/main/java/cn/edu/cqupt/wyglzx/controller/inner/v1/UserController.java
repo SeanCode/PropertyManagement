@@ -25,4 +25,31 @@ public class UserController {
 
         return new DataResponse().put("user_list", userService.getUserListByDepartmentId(departmentId));
     }
+
+    @RequestMapping("/detail")
+    @JsonView(OutputEntityJsonView.Detail.class)
+    public DataResponse getUserDetail(@RequestParam("id") Long id) {
+        return new DataResponse().put("user", userService.getUserById(id));
+    }
+
+    @RequestMapping("/info-update")
+    @JsonView(OutputEntityJsonView.Detail.class)
+    public DataResponse updateUserInfo(@RequestParam("id") Long id,
+                                       @RequestParam(value = "name", required = false, defaultValue = "") String name,
+                                       @RequestParam(value = "username", required = false, defaultValue = "") String username,
+                                       @RequestParam(value = "phone", required = false, defaultValue = "") String phone,
+                                       @RequestParam(value = "id_card", required = false, defaultValue = "") String idCard,
+                                       @RequestParam(value = "school_card", required = false, defaultValue = "") String schoolCard,
+                                       @RequestParam(value = "remark", required = false, defaultValue = "") String remark) {
+
+        return new DataResponse().put("user", userService.updateUserInfo(id, name, username, phone, idCard, schoolCard, remark));
+    }
+
+    @RequestMapping("/delete")
+    @JsonView(OutputEntityJsonView.Detail.class)
+    public DataResponse deleteUser(@RequestParam("id") Long id) {
+        userService.deleteUser(id);
+        return new DataResponse();
+    }
+
 }

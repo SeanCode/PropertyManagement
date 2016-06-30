@@ -22,6 +22,9 @@ public interface NodeOwnerDao extends JpaRepository<NodeOwnerEntity, Long> {
     @Query(value = "select * from node_owner where owner_id = :owner_id and owner_type = :owner_type and weight >= 0 limit 0,1", nativeQuery = true)
     NodeOwnerEntity getNodeOwner(@Param("owner_id") Long ownerId, @Param("owner_type") Integer ownerType);
 
+    @Query(value = "select * from node_owner where node_id = :node_id and owner_id = :owner_id and owner_type = :owner_type and status = 0 and weight >= 0 limit 0,1", nativeQuery = true)
+    NodeOwnerEntity getValidNodeOwner(@Param("node_id") Long nodeId, @Param("owner_id") Long ownerId, @Param("owner_type") Integer ownerType);
+
     @Query(value = "select * from node_owner where node_id = :node_id and weight >= 0 limit 0,1", nativeQuery = true)
     NodeOwnerEntity getNodeOwnerByNode(@Param("node_id") Long nodeId);
 }

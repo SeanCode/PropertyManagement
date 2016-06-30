@@ -54,7 +54,7 @@ public class NodeOwnerService {
     }
 
     public NodeOwnerEntity addNodeOwner(Long nodeId, Long ownerId, Integer ownerType) {
-        NodeOwnerEntity nodeOwnerEntity = nodeOwnerDao.getNodeOwner(nodeId, ownerId, ownerType);
+        NodeOwnerEntity nodeOwnerEntity = nodeOwnerDao.getValidNodeOwner(nodeId, ownerId, ownerType);
         if (nodeOwnerEntity != null) {
             throw new ExistsException();
         }
@@ -73,6 +73,7 @@ public class NodeOwnerService {
     public NodeOwnerEntity invalidNodeOwner(Long nodeId, Long userId, Integer ownerType) {
         NodeOwnerEntity nodeOwnerEntity = checkByNodeAndOwner(nodeId, userId, ownerType);
         nodeOwnerEntity.setStatus(NodeOwnerEntity.STATUS_INVALID);
+        nodeOwnerEntity.setWeight(-1);
         nodeOwnerEntity.setUpdateTime(Util.time());
 
         nodeOwnerEntity = nodeOwnerDao.save(nodeOwnerEntity);
@@ -89,12 +90,12 @@ public class NodeOwnerService {
 
     public NodeOwnerEntity getOwnerByNode(Long nodeId) {
         NodeOwnerEntity nodeOwnerEntity = nodeOwnerDao.getNodeOwnerByNode(nodeId);
-        if (nodeOwnerEntity == null) {
+        if (nodeOwnerEntity == null || nodeOwnerEntity.getStatus() == NodeOwnerEntity.STATUS_INVALID) {
             throw new NotExistsException();
         }
         switch (nodeOwnerEntity.getOwnerType()) {
             case NodeOwnerEntity.OWNER_TYPE_USER:
-                nodeOwnerEntity.setInstitution(institutionDao.getInstitutionById(nodeOwnerEntity.getOwnerId()));
+                nodeOwnerEntity.setUser(userDao.getUserById(nodeOwnerEntity.getOwnerId()));
                 break;
             case NodeOwnerEntity.OWNER_TYPE_INSTITUTION:
                 nodeOwnerEntity.setInstitution(institutionDao.getInstitutionById(nodeOwnerEntity.getOwnerId()));

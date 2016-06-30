@@ -44,8 +44,9 @@ public class InstitutionService {
     public InstitutionEntity updateInfo(Long id, String name, String people, String contact, String description, String remark, String code) {
         InstitutionEntity institution = checkInstitutionById(id);
 
-        checkNotExistsByName(name);
-
+        if (!name.equals(institution.getName())) {
+            checkNotExistsByName(name);
+        }
         if (StringUtils.isNotBlank(name)) {
             institution.setName(name);
         }
@@ -108,5 +109,9 @@ public class InstitutionService {
         institutionEntity.setUpdateTime(Util.time());
 
         institutionDao.save(institutionEntity);
+    }
+
+    public InstitutionEntity getDetail(Long id) {
+        return checkInstitutionById(id);
     }
 }

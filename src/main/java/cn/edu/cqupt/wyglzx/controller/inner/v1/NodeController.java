@@ -32,4 +32,28 @@ public class NodeController {
         return new DataResponse().put("tree_root", nodeService.getNodeTreeRoot());
     }
 
+
+    @RequestMapping("/detail")
+    @JsonView(OutputEntityJsonView.Detail.class)
+    public DataResponse getNodeDetail(@RequestParam("id") Long id) {
+
+        return new DataResponse().put("node", nodeService.getNodeDetail(id));
+    }
+
+    @RequestMapping("/info-update")
+    @JsonView(OutputEntityJsonView.Detail.class)
+    public DataResponse updateNodeInfo(@RequestParam("id") Long id,
+                                       @RequestParam("name") String name,
+                                       @RequestParam("code") String code,
+                                       @RequestParam("path") String path,
+                                       @RequestParam("type") Integer type,
+                                       @RequestParam("area") Double area,
+                                       @RequestParam("price") Double price,
+                                       @RequestParam("fee") Double fee,
+                                       @RequestParam("ownership") String ownership,
+                                       @RequestParam("remark") String remark) {
+
+        return new DataResponse().put("node", nodeService.updateNodeInfo(id, name, code, path, type, area, price, fee, ownership, remark));
+    }
+
 }

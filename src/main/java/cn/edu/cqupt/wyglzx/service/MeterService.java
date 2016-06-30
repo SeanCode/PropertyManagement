@@ -63,7 +63,7 @@ public class MeterService {
         return list;
     }
 
-    public MeterEntity addMeter(String name, Long nodeId, String code, Integer type, Integer rate, Double begin, String nameplate, String manufacturers, String purchaser, Double cost, Long buyTime, Long productTime, String remark) {
+    public MeterEntity addNormalMeter(String name, Long nodeId, String code, Integer type, Integer rate, Double begin, String nameplate, String manufacturers, String purchaser, Double cost, Long buyTime, Long productTime, String remark) {
 
         if (StringUtils.isBlank(name)) {
             throw new InvalidParamsException("name");
@@ -71,7 +71,7 @@ public class MeterService {
         if (nodeId <= 0) {
             throw new InvalidParamsException("node_id");
         }
-        if (type <= 0 || type > MeterEntity.TYPE_CHECK_GAS) {
+        if (type <= 0 || type > MeterEntity.TYPE_GAS) {
             throw new InvalidParamsException("type");
         }
         MeterEntity meter = new MeterEntity();
@@ -116,46 +116,17 @@ public class MeterService {
         return meter;
     }
 
-    public MeterEntity updateMeter(Long id, String name, String code, Integer type, Integer rate, Double begin, String nameplate, String manufacturers, String purchaser, Double cost, Long buyTime, Long productTime, String remark) {
+    public MeterEntity updateMeter(Long id, String name, String code, String remark) {
         MeterEntity meter = checkMeterById(id);
-        if (type < 0 || type > MeterEntity.TYPE_CHECK_GAS) {
-            throw new InvalidParamsException("type");
-        }
-        if (type > 0) {
-            meter.setType(type);
-        }
-        if (rate > 0) {
-            meter.setRate(rate);
-        }
-        if (begin > 0) {
-            meter.setBegin(begin);
-        }
-        if (cost > 0) {
-            meter.setCost(cost);
-        }
-        if (buyTime > 0) {
-            meter.setBuyTime(buyTime);
-        }
-        if (productTime > 0) {
-            meter.setProductTime(productTime);
-        }
+
         if (StringUtils.isNotBlank(name)) {
             meter.setName(name);
         }
         if (StringUtils.isNotBlank(code)) {
             meter.setCode(code);
         }
-        if (StringUtils.isNotBlank(nameplate)) {
-            meter.setNameplate(nameplate);
-        }
         if (StringUtils.isNotBlank(remark)) {
             meter.setRemark(remark);
-        }
-        if (StringUtils.isNotBlank(manufacturers)) {
-            meter.setManufacturers(manufacturers);
-        }
-        if (StringUtils.isNotBlank(purchaser)) {
-            meter.setPurchaser(purchaser);
         }
         meter.setUpdateTime(Util.time());
         meter = meterDao.save(meter);
@@ -164,6 +135,7 @@ public class MeterService {
     }
 
     public void removeMeter(Long id, Long nodeId) {
+        //TODO 检查子孙表和检查表是否被移除
         MeterEntity meter = meterDao.getMeterByIdAndNodeId(id, nodeId);
         if (meter == null) {
             throw new NotExistsException();
@@ -205,5 +177,67 @@ public class MeterService {
 
         meterDao.save(parent);
         meterDao.save(meter);
+    }
+
+    public MeterEntity getMeterDetail(Long id) {
+        MeterEntity meterEntity = checkMeterById(id);
+        meterEntity.setParent(meterDao.getMeterById(meterEntity.getParentId()));
+        return meterEntity;
+    }
+
+    @Transactional
+    public MeterEntity addCheckMeter(String name, String code, Integer type, Long parentId, Integer rate, Double begin, String nameplate, String manufacturers, String purchaser, Double cost, Long buyTime, Long productTime, String remark) {
+        MeterEntity parent = checkMeterById(parentId);
+
+        if (StringUtils.isBlank(name)) {
+            throw new InvalidParamsException("name");
+        }
+        if (type <= MeterEntity.TYPE_GAS || type > MeterEntity.TYPE_CHECK_GAS) {
+            throw new InvalidParamsException("type");
+        }
+        MeterEntity meter = new MeterEntity();
+        meter.setNodeId(parent.getNodeId());
+        meter.setParentId(parent.getId());
+        meter.setName(name);
+        meter.setType(type);
+        if (rate > 0) {
+            meter.setRate(rate);
+        }
+        if (begin > 0) {
+            meter.setBegin(begin);
+        }
+        if (cost > 0) {
+            meter.setCost(cost);
+        }
+        if (buyTime > 0) {
+            meter.setBuyTime(buyTime);
+        }
+        if (productTime > 0) {
+            meter.setProductTime(productTime);
+        }
+        if (StringUtils.isNotBlank(code)) {
+            meter.setCode(code);
+        }
+        if (StringUtils.isNotBlank(nameplate)) {
+            meter.setNameplate(nameplate);
+        }
+        if (StringUtils.isNotBlank(remark)) {
+            meter.setRemark(remark);
+        }
+        if (StringUtils.isNotBlank(manufacturers)) {
+            meter.setManufacturers(manufacturers);
+        }
+        if (StringUtils.isNotBlank(purchaser)) {
+            meter.setPurchaser(purchaser);
+        }
+        meter.setCreateTime(Util.time());
+        meter.setUpdateTime(meter.getCreateTime());
+
+        meter = meterDao.save(meter);
+
+        parent.setCheckMeterId(meter.getId());
+        meterDao.save(parent);
+
+        return meter;
     }
 }
