@@ -52,4 +52,17 @@ public class UserController {
         return new DataResponse();
     }
 
+    @RequestMapping("/add")
+    @JsonView(OutputEntityJsonView.Basic.class)
+    public DataResponse addUser(@RequestParam(value = "name") String name,
+                                @RequestParam(value = "department_id") Long departmentId,
+                                @RequestParam(value = "username", required = false, defaultValue = "") String username,
+                                @RequestParam(value = "phone", required = false, defaultValue = "") String phone,
+                                @RequestParam(value = "id_card") String idCard,
+                                @RequestParam(value = "school_card", required = false, defaultValue = "") String schoolCard,
+                                @RequestParam(value = "remark", required = false, defaultValue = "") String remark) {
+
+        return new DataResponse().put("user", userService.addUser(name, departmentId, username, phone, idCard, schoolCard, remark));
+    }
+
 }

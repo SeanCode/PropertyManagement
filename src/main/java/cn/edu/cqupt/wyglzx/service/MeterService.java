@@ -135,10 +135,20 @@ public class MeterService {
     }
 
     public void removeMeter(Long id, Long nodeId) {
-        //TODO 检查子孙表和检查表是否被移除
         MeterEntity meter = meterDao.getMeterByIdAndNodeId(id, nodeId);
         if (meter == null) {
             throw new NotExistsException();
+        }
+        if (meter.getType() < 4) {// 主表
+            // 是否有检查表
+            List<MeterEntity> checkList = meterDao.getMeterCheckListByNodeId(meter.getNodeId());
+            if (checkList.size() > 0) {
+                throw new ExistsException("存在检查表");
+            }
+            List<MeterEntity> children = meterDao.getMeterChildrenByNodeId(meter.getNodeId());
+            if (children.size() > 0) {
+                throw new ExistsException("存在分表");
+            }
         }
         meter.setWeight(-1);
         meter.setUpdateTime(Util.time());

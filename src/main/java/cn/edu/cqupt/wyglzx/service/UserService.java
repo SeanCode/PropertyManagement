@@ -3,6 +3,7 @@ package cn.edu.cqupt.wyglzx.service;
 import cn.edu.cqupt.wyglzx.common.Util;
 import cn.edu.cqupt.wyglzx.dao.UserDao;
 import cn.edu.cqupt.wyglzx.entity.UserEntity;
+import cn.edu.cqupt.wyglzx.exception.ExistsException;
 import cn.edu.cqupt.wyglzx.exception.NotExistsException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,13 @@ public class UserService {
             throw new NotExistsException();
         }
         return userEntity;
+    }
+
+    public void checkNotExistByIdCard(String idCard) {
+        UserEntity userEntity = userDao.getUserByIdCard(idCard);
+        if (userEntity != null) {
+            throw new ExistsException();
+        }
     }
 
     public List<UserEntity> getUserListByDepartmentId(Long departmentId) {
@@ -71,4 +79,29 @@ public class UserService {
         return userEntity;
     }
 
+    public UserEntity addUser(String name, Long departmentId, String username, String phone, String idCard, String schoolCard, String remark) {
+        checkNotExistByIdCard(idCard);
+        UserEntity userEntity = new UserEntity();
+        userEntity.setName(name);
+        userEntity.setDepartmentId(departmentId);
+        userEntity.setIdCard(idCard);
+        if (StringUtils.isNotBlank(username)) {
+            userEntity.setUsername(username);
+        }
+        if (StringUtils.isNotBlank(phone)) {
+            userEntity.setPhone(phone);
+        }
+        if (StringUtils.isNotBlank(schoolCard)) {
+            userEntity.setSchoolCard(schoolCard);
+        }
+        if (StringUtils.isNotBlank(remark)) {
+            userEntity.setRemark(remark);
+        }
+        userEntity.setCreateTime(Util.time());
+        userEntity.setUpdateTime(userEntity.getCreateTime());
+
+        userEntity = userDao.save(userEntity);
+
+        return userEntity;
+    }
 }
