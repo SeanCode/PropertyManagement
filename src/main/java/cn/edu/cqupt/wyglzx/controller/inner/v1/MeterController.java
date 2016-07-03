@@ -102,10 +102,30 @@ public class MeterController {
         return new DataResponse();
     }
 
+    @RequestMapping("/replace")
+    @JsonView(OutputEntityJsonView.Basic.class)
+    public DataResponse replaceMeter(@RequestParam("id") Long id,
+                                     @RequestParam("end") Double end,
+                                     @RequestParam(value = "name", required = false, defaultValue = "") String name,
+                                     @RequestParam(value = "code", required = false, defaultValue = "") String code,
+                                     @RequestParam(value = "rate", required = false, defaultValue = "1") Integer rate,
+                                     @RequestParam(value = "begin", required = false, defaultValue = "0") Double begin,
+                                     @RequestParam(value = "nameplate", required = false, defaultValue = "") String nameplate,
+                                     @RequestParam(value = "manufacturers", required = false, defaultValue = "") String manufacturers,
+                                     @RequestParam(value = "purchaser", required = false, defaultValue = "") String purchaser,
+                                     @RequestParam(value = "cost", required = false, defaultValue = "0") Double cost,
+                                     @RequestParam(value = "buy_time", required = false, defaultValue = "0") Long buyTime,
+                                     @RequestParam(value = "product_time", required = false, defaultValue = "0") Long productTime,
+                                     @RequestParam(value = "remark", required = false, defaultValue = "") String remark) {
+
+        meterService.replaceMeter(id, end, name, code, rate, begin, nameplate, manufacturers, purchaser, cost, buyTime, productTime, remark);
+        return new DataResponse();
+    }
+
     @RequestMapping("/set-as-child")
     @JsonView(OutputEntityJsonView.Basic.class)
-    public DataResponse setMeterAsChild(@RequestParam("id") Long id, @RequestParam("parent_id") Long parentId) {
-        meterService.setAsChild(id, parentId);
+    public DataResponse setMeterAsChild(@RequestParam("id") Long id, @RequestParam("parent_id") Long parentId, @RequestParam("child_node_id") Long nodeId) {
+        meterService.setAsChild(id, nodeId, parentId);
         return new DataResponse();
     }
 

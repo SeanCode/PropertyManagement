@@ -21,6 +21,7 @@ public class MeterEntity {
     private int type = 0;
     private double rate = 1.00;
     private double begin = 0.00;
+    private double current = 0.00;
     private String nameplate = "";
     private String manufacturers = "";
     private String purchaser = "";
@@ -28,7 +29,7 @@ public class MeterEntity {
     private long buyTime = 0;
     private long productTime = 0;
     private String remark = "";
-    private int status = 0;
+    private int status = STATUS_VALID;
     private int weight = 0;
     private long createTime = 0;
     private long updateTime = 0;
@@ -190,7 +191,7 @@ public class MeterEntity {
     }
 
     @Basic
-    @Column(name = "begin", nullable = false, precision = 0)
+    @Column(name = "begin", nullable = false, precision = 2)
     @JsonProperty("begin")
     @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public double getBegin() {
@@ -199,6 +200,18 @@ public class MeterEntity {
 
     public void setBegin(double begin) {
         this.begin = begin;
+    }
+
+    @Basic
+    @Column(name = "current", nullable = false, precision = 2)
+    @JsonProperty("current")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    public double getCurrent() {
+        return current;
+    }
+
+    public void setCurrent(double current) {
+        this.current = current;
     }
 
     @Basic

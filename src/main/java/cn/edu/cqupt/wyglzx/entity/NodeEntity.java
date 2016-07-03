@@ -1,6 +1,7 @@
 package cn.edu.cqupt.wyglzx.entity;
 
 import cn.edu.cqupt.wyglzx.common.OutputEntityJsonView;
+import cn.edu.cqupt.wyglzx.common.Util;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 
@@ -17,7 +18,7 @@ public class NodeEntity {
 
     private long id;
     private String name = "";
-    private long parentId = 0;
+    private String parentId = "|0|";
     private long rootId = 0;
     private int level = 0;
     private String code = "";
@@ -37,6 +38,7 @@ public class NodeEntity {
     public static final int TYPE_ROOM = 2;
     public static final int TYPE_INSTITUTION = 3;
 
+    private int[] parentIdArray;
     private List<NodeEntity> children;
     private boolean isParent = true; //temp true
     private String typeName;
@@ -70,12 +72,16 @@ public class NodeEntity {
     @Column(name = "parent_id", nullable = false)
     @JsonProperty("parent_id")
     @JsonView({OutputEntityJsonView.Tree.class, OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
-    public long getParentId() {
+    public String getParentId() {
         return parentId;
     }
 
-    public void setParentId(long parentId) {
+    public void setParentId(String parentId) {
         this.parentId = parentId;
+    }
+
+    public static String generateParentIdString(Long parentId) {
+        return "|" + parentId + "|";
     }
 
     @Basic
@@ -327,7 +333,7 @@ public class NodeEntity {
         long temp;
         result = (int) (id ^ (id >>> 32));
         result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (int) (parentId ^ (parentId >>> 32));
+        result = 31 * result + (parentId != null ? parentId.hashCode() : 0);
         result = 31 * result + (int) (rootId ^ (rootId >>> 32));
         result = 31 * result + level;
         result = 31 * result + (code != null ? code.hashCode() : 0);

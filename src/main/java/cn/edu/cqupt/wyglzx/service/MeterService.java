@@ -155,8 +155,11 @@ public class MeterService {
         meterDao.save(meter);
     }
 
-    public void setAsChild(Long id, Long parentId) {
+    public void setAsChild(Long id, Long nodeId, Long parentId) {
         MeterEntity meter = checkMeterById(id);
+        if (nodeId != meter.getNodeId()) {
+            throw new NotExistsException();
+        }
         MeterEntity parent = checkMeterById(parentId);
 
         meter.setParentId(parent.getId());
@@ -249,5 +252,60 @@ public class MeterService {
         meterDao.save(parent);
 
         return meter;
+    }
+
+    @Transactional
+    public void replaceMeter(Long id, Double end, String name, String code, Integer rate, Double begin, String nameplate, String manufacturers, String purchaser, Double cost, Long buyTime, Long productTime, String remark) {
+        MeterEntity oldMeter = checkMeterById(id);
+        if (oldMeter.getCurrent() != end) {
+            throw new InvalidParamsException("旧表止度尚未录入");
+        }
+        MeterEntity meterEntity = new MeterEntity();
+        meterEntity.setParentId(oldMeter.getParentId());
+        meterEntity.setType(oldMeter.getType());
+        meterEntity.setName(oldMeter.getName());
+        meterEntity.setNodeId(oldMeter.getNodeId());
+        meterEntity.setCode((oldMeter.getCode()));
+        if (StringUtils.isNotBlank(name)) {
+            meterEntity.setName(name);
+        }
+        if (StringUtils.isNotBlank(code)) {
+            meterEntity.setCode(code);
+        }
+        if (rate != 0) {
+            meterEntity.setRate(rate);
+        }
+        if (begin != 0) {
+            meterEntity.setBegin(begin);
+        }
+        if (StringUtils.isNotBlank(nameplate)) {
+            meterEntity.setNameplate(nameplate);
+        }
+        if (StringUtils.isNotBlank(manufacturers)) {
+            meterEntity.setManufacturers(manufacturers);
+        }
+        if (StringUtils.isNotBlank(purchaser)) {
+            meterEntity.setPurchaser(purchaser);
+        }
+        if (StringUtils.isNotBlank(remark)) {
+            meterEntity.setRemark(remark);
+        }
+        if (cost > 0) {
+            meterEntity.setCost(cost);
+        }
+        if (buyTime > 0) {
+            meterEntity.setBuyTime(buyTime);
+        }
+        if (productTime > 0) {
+            meterEntity.setProductTime(productTime);
+        }
+        meterEntity.setCreateTime(Util.time());
+        meterEntity.setUpdateTime(meterEntity.getCreateTime());
+
+        meterDao.save(meterEntity);
+
+        oldMeter.setStatus(MeterEntity.STATUS_INVALID);
+        oldMeter.setUpdateTime(Util.time());
+        meterDao.save(oldMeter);
     }
 }
