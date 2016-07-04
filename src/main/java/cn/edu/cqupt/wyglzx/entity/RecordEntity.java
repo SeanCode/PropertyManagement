@@ -20,17 +20,34 @@ public class RecordEntity {
     private int year = 0;
     private long month = 0;
     private double end = 0.00;
-    private double usage = 0.00;
-    private long readerId = 0;
+    private double begin = 0.00;
+    private int type = 0;
+    private String reader = "";
     private long operatorId = 0;
-    private String reviewer = "";
+    private long reviewerId = 0;
     private String remark = "";
-    private int status = 0;
-    private int tag = 0;
+    private int status = STATUS_PENDING;
+    private int tag = TAG_INIT;
     private long time = 0;
     private int weight = 0;
     private long createTime = 0;
     private long updateTime = 0;
+
+    private NodeEntity node;
+    private MeterEntity meter;
+    private AdminEntity operator;
+
+    public static final int TYPE_ARCHIVE = 1;
+    public static final int TYPE_TEMP = 2;
+
+    public static final int TAG_INIT = 0;
+    public static final int TAG_NORMAL = 1;
+    public static final int TAG_WARNING = 2;
+    public static final int TAG_ERROR = 3;
+
+    public static final int STATUS_PENDING = 0;
+    public static final int STATUS_APPROED = 1;
+    public static final int STATUS_REJECTED = -1;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -118,27 +135,39 @@ public class RecordEntity {
     }
 
     @Basic
-    @Column(name = "usage", nullable = false, precision = 0)
-    @JsonProperty("usage")
+    @Column(name = "begin", nullable = false, precision = 0)
+    @JsonProperty("begin")
     @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
-    public double getUsage() {
-        return usage;
+    public double getBegin() {
+        return begin;
     }
 
-    public void setUsage(double usage) {
-        this.usage = usage;
+    public void setBegin(double begin) {
+        this.begin = begin;
     }
 
     @Basic
-    @Column(name = "reader_id", nullable = false)
-    @JsonProperty("reader_id")
+    @Column(name = "type", nullable = false)
+    @JsonProperty("type")
     @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
-    public long getReaderId() {
-        return readerId;
+    public int getType() {
+        return type;
     }
 
-    public void setReaderId(long readerId) {
-        this.readerId = readerId;
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    @Basic
+    @Column(name = "reader", nullable = false)
+    @JsonProperty("reader")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    public String getReader() {
+        return reader;
+    }
+
+    public void setReader(String reader) {
+        this.reader = reader;
     }
 
     @Basic
@@ -154,15 +183,51 @@ public class RecordEntity {
     }
 
     @Basic
-    @Column(name = "reviewer", nullable = false, length = 99)
-    @JsonProperty("reviewer")
+    @Column(name = "reviewer_id", nullable = false)
+    @JsonProperty("reviewer_id")
     @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
-    public String getReviewer() {
-        return reviewer;
+    public long getReviewerId() {
+        return reviewerId;
     }
 
-    public void setReviewer(String reviewer) {
-        this.reviewer = reviewer;
+    public void setReviewerId(long reviewerId) {
+        this.reviewerId = reviewerId;
+    }
+
+    @OneToOne
+    @JoinColumn(name = "node_id", insertable = false, updatable = false)
+    @JsonProperty("node")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    public NodeEntity getNode() {
+        return node;
+    }
+
+    public void setNode(NodeEntity node) {
+        this.node = node;
+    }
+
+    @OneToOne
+    @JoinColumn(name = "meter_id", insertable = false, updatable = false)
+    @JsonProperty("meter")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    public MeterEntity getMeter() {
+        return meter;
+    }
+
+    public void setMeter(MeterEntity meter) {
+        this.meter = meter;
+    }
+
+    @OneToOne
+    @JoinColumn(name = "operator_id", insertable = false, updatable = false)
+    @JsonProperty("operator")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    public AdminEntity getOperator() {
+        return operator;
+    }
+
+    public void setOperator(AdminEntity operator) {
+        this.operator = operator;
     }
 
     @Basic
@@ -263,19 +328,22 @@ public class RecordEntity {
         if (year != that.year) return false;
         if (month != that.month) return false;
         if (Double.compare(that.end, end) != 0) return false;
-        if (Double.compare(that.usage, usage) != 0) return false;
-        if (readerId != that.readerId) return false;
+        if (Double.compare(that.begin, begin) != 0) return false;
+        if (type != that.type) return false;
         if (operatorId != that.operatorId) return false;
+        if (reviewerId != that.reviewerId) return false;
         if (status != that.status) return false;
         if (tag != that.tag) return false;
         if (time != that.time) return false;
         if (weight != that.weight) return false;
         if (createTime != that.createTime) return false;
         if (updateTime != that.updateTime) return false;
-        if (reviewer != null ? !reviewer.equals(that.reviewer) : that.reviewer != null) return false;
+        if (reader != null ? !reader.equals(that.reader) : that.reader != null) return false;
         if (remark != null ? !remark.equals(that.remark) : that.remark != null) return false;
+        if (node != null ? !node.equals(that.node) : that.node != null) return false;
+        if (meter != null ? !meter.equals(that.meter) : that.meter != null) return false;
+        return operator != null ? operator.equals(that.operator) : that.operator == null;
 
-        return true;
     }
 
     @Override
@@ -290,11 +358,12 @@ public class RecordEntity {
         result = 31 * result + (int) (month ^ (month >>> 32));
         temp = Double.doubleToLongBits(end);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(usage);
+        temp = Double.doubleToLongBits(begin);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
-        result = 31 * result + (int) (readerId ^ (readerId >>> 32));
+        result = 31 * result + type;
+        result = 31 * result + (reader != null ? reader.hashCode() : 0);
         result = 31 * result + (int) (operatorId ^ (operatorId >>> 32));
-        result = 31 * result + (reviewer != null ? reviewer.hashCode() : 0);
+        result = 31 * result + (int) (reviewerId ^ (reviewerId >>> 32));
         result = 31 * result + (remark != null ? remark.hashCode() : 0);
         result = 31 * result + status;
         result = 31 * result + tag;
@@ -302,6 +371,9 @@ public class RecordEntity {
         result = 31 * result + weight;
         result = 31 * result + (int) (createTime ^ (createTime >>> 32));
         result = 31 * result + (int) (updateTime ^ (updateTime >>> 32));
+        result = 31 * result + (node != null ? node.hashCode() : 0);
+        result = 31 * result + (meter != null ? meter.hashCode() : 0);
+        result = 31 * result + (operator != null ? operator.hashCode() : 0);
         return result;
     }
 }

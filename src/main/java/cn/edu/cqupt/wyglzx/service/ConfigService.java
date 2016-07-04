@@ -24,11 +24,17 @@ public class ConfigService {
     PriceDao priceDao;
 
     public PriceConfig getPriceByYearAndMonth(Integer year, Integer month) {
+        PriceConfig priceConfig = null;
         //return specified price
         if (year != null && year > 0 && month != null && month > 0) {
             PriceEntity priceEntity = priceDao.getPriceByYearAndMonth(year, month);
 
-            return PriceConfig.cloneFromPriceEntity(priceEntity);
+            if (priceEntity != null) {
+                priceConfig = PriceConfig.cloneFromPriceEntity(priceEntity);
+            }
+        }
+        if (priceConfig != null) {
+            return priceConfig;
         }
 
         //return default price
@@ -37,7 +43,8 @@ public class ConfigService {
             throw new NotExistsException();
         }
 
-        return PriceConfig.cloneFromConfigEntity(config);
+        priceConfig = PriceConfig.cloneFromConfigEntity(config);
+        return priceConfig;
     }
 
     public PriceConfig savePrice(Integer year, Integer month, Double water, Double ele, Double gas) {
