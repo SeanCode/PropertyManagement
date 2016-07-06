@@ -22,6 +22,7 @@ public class MeterEntity {
     private double rate = 1.00;
     private double begin = 0.00;
     private double current = 0.00;
+    private long lastInputTime = 0;
     private String nameplate = "";
     private String manufacturers = "";
     private String purchaser = "";
@@ -212,6 +213,18 @@ public class MeterEntity {
 
     public void setCurrent(double current) {
         this.current = current;
+    }
+
+    @Basic
+    @Column(name = "last_input_time", nullable = false)
+    @JsonProperty("last_input_time")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    public long getLastInputTime() {
+        return lastInputTime;
+    }
+
+    public void setLastInputTime(long lastInputTime) {
+        this.lastInputTime = lastInputTime;
     }
 
     @Basic

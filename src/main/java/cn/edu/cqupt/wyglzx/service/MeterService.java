@@ -25,7 +25,7 @@ public class MeterService {
     public MeterEntity checkMeterById(Long id) {
         MeterEntity meterEntity = meterDao.getMeterById(id);
         if (meterEntity == null) {
-            throw new NotExistsException();
+            throw new NotExistsException("表不存在");
         }
         return meterEntity;
     }
@@ -81,8 +81,9 @@ public class MeterService {
         if (rate > 0) {
             meter.setRate(rate);
         }
-        if (begin > 0) {
+        if (begin != 0) {
             meter.setBegin(begin);
+            meter.setCurrent(begin);
         }
         if (cost > 0) {
             meter.setCost(cost);
@@ -216,8 +217,9 @@ public class MeterService {
         if (rate > 0) {
             meter.setRate(rate);
         }
-        if (begin > 0) {
+        if (begin != 0) {
             meter.setBegin(begin);
+            meter.setCurrent(begin);
         }
         if (cost > 0) {
             meter.setCost(cost);
@@ -277,6 +279,7 @@ public class MeterService {
         }
         if (begin != 0) {
             meterEntity.setBegin(begin);
+            meterEntity.setCurrent(begin);
         }
         if (StringUtils.isNotBlank(nameplate)) {
             meterEntity.setNameplate(nameplate);

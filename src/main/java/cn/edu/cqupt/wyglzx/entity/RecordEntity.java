@@ -3,6 +3,8 @@ package cn.edu.cqupt.wyglzx.entity;
 import cn.edu.cqupt.wyglzx.common.OutputEntityJsonView;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 import javax.persistence.*;
 
@@ -33,9 +35,13 @@ public class RecordEntity {
     private long createTime = 0;
     private long updateTime = 0;
 
+    private String statusName = "";
+    private String tagName = "";
+
     private NodeEntity node;
     private MeterEntity meter;
     private AdminEntity operator;
+    private AdminEntity reviewer;
 
     public static final int TYPE_ARCHIVE = 1;
     public static final int TYPE_TEMP = 2;
@@ -194,10 +200,24 @@ public class RecordEntity {
         this.reviewerId = reviewerId;
     }
 
-    @OneToOne
+    @OneToOne()
+    @NotFound(action = NotFoundAction.IGNORE)
+    @JoinColumn(name = "reviewer_id", insertable = false, updatable = false)
+    @JsonProperty("reviewer")
+    @JsonView({OutputEntityJsonView.Detail.class})
+    public AdminEntity getReviewer() {
+        return reviewer;
+    }
+
+    public void setReviewer(AdminEntity reviewer) {
+        this.reviewer = reviewer;
+    }
+
+    @OneToOne()
+    @NotFound(action = NotFoundAction.IGNORE)
     @JoinColumn(name = "node_id", insertable = false, updatable = false)
     @JsonProperty("node")
-    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    @JsonView({OutputEntityJsonView.Detail.class})
     public NodeEntity getNode() {
         return node;
     }
@@ -206,10 +226,11 @@ public class RecordEntity {
         this.node = node;
     }
 
-    @OneToOne
+    @OneToOne()
+    @NotFound(action = NotFoundAction.IGNORE)
     @JoinColumn(name = "meter_id", insertable = false, updatable = false)
     @JsonProperty("meter")
-    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    @JsonView({OutputEntityJsonView.Detail.class})
     public MeterEntity getMeter() {
         return meter;
     }
@@ -218,7 +239,8 @@ public class RecordEntity {
         this.meter = meter;
     }
 
-    @OneToOne
+    @OneToOne()
+    @NotFound(action = NotFoundAction.IGNORE)
     @JoinColumn(name = "operator_id", insertable = false, updatable = false)
     @JsonProperty("operator")
     @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
@@ -252,6 +274,53 @@ public class RecordEntity {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    @Transient
+    @JsonProperty("status_name")
+    @JsonView({OutputEntityJsonView.Detail.class})
+    public String getStatusName() {
+        switch (status) {
+            case STATUS_APPROED:
+                statusName = "审核通过";
+                break;
+            case STATUS_PENDING:
+                statusName = "待审核";
+                break;
+            case STATUS_REJECTED:
+                statusName = "未通过";
+                break;
+        }
+        return statusName;
+    }
+
+    public void setStatusName(String statusName) {
+        this.statusName = statusName;
+    }
+
+    @Transient
+    @JsonProperty("tag_name")
+    @JsonView({OutputEntityJsonView.Detail.class})
+    public String getTagName() {
+        switch (tag) {
+            case TAG_INIT:
+                tagName = "暂无";
+                break;
+            case TAG_NORMAL:
+                tagName = "正常";
+                break;
+            case TAG_WARNING:
+                tagName = "警告";
+                break;
+            case TAG_ERROR:
+                tagName = "错误";
+                break;
+        }
+        return tagName;
+    }
+
+    public void setTagName(String tagName) {
+        this.tagName = tagName;
     }
 
     @Basic
@@ -293,7 +362,7 @@ public class RecordEntity {
     @Basic
     @Column(name = "create_time", nullable = false)
     @JsonProperty("create_time")
-    @JsonView({OutputEntityJsonView.Detail.class})
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public long getCreateTime() {
         return createTime;
     }
@@ -305,7 +374,7 @@ public class RecordEntity {
     @Basic
     @Column(name = "update_time", nullable = false)
     @JsonProperty("update_time")
-    @JsonView({OutputEntityJsonView.Detail.class})
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public long getUpdateTime() {
         return updateTime;
     }
