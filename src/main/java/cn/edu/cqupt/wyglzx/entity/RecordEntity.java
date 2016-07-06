@@ -20,7 +20,7 @@ public class RecordEntity {
     private int meterType = 0;
     private long nodeId = 0;
     private int year = 0;
-    private long month = 0;
+    private int month = 0;
     private double end = 0.00;
     private double begin = 0.00;
     private int type = 0;
@@ -52,7 +52,7 @@ public class RecordEntity {
     public static final int TAG_ERROR = 3;
 
     public static final int STATUS_PENDING = 0;
-    public static final int STATUS_APPROED = 1;
+    public static final int STATUS_APPROVED = 1;
     public static final int STATUS_REJECTED = -1;
 
     @Id
@@ -120,11 +120,11 @@ public class RecordEntity {
     @Column(name = "month", nullable = false)
     @JsonProperty("month")
     @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
-    public long getMonth() {
+    public int getMonth() {
         return month;
     }
 
-    public void setMonth(long month) {
+    public void setMonth(int month) {
         this.month = month;
     }
 
@@ -281,7 +281,7 @@ public class RecordEntity {
     @JsonView({OutputEntityJsonView.Detail.class})
     public String getStatusName() {
         switch (status) {
-            case STATUS_APPROED:
+            case STATUS_APPROVED:
                 statusName = "审核通过";
                 break;
             case STATUS_PENDING:

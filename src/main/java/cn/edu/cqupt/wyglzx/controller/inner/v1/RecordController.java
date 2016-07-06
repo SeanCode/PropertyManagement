@@ -52,6 +52,29 @@ public class RecordController {
         return new DataResponse().put("record_list", recordService.getTempListByNodeAndTime(nodeId, year, month));
     }
 
+    @RequestMapping("/list-pending")
+    @JsonView(OutputEntityJsonView.Detail.class)
+    public DataResponse getListPending(@RequestParam(value = "page", required = false, defaultValue = "0") Integer page) {
+
+        return new DataResponse().put("pending_list", recordService.getPendingList(page));
+    }
+
+    @RequestMapping("/list-checked")
+    @JsonView(OutputEntityJsonView.Detail.class)
+    public DataResponse getListChecked(@RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
+                                       @RequestParam(value = "all", required = false, defaultValue = "false") Boolean all) {
+
+        return new DataResponse().put("checked_list", recordService.getCheckedList(page, all));
+    }
+
+    @RequestMapping("/check")
+    @JsonView(OutputEntityJsonView.Basic.class)
+    public DataResponse updateRecordStatus(@RequestParam("id") Long id,
+                                           @RequestParam("status") Integer status) {
+        recordService.checkRecord(id, status);
+        return new DataResponse();
+    }
+
     @RequestMapping("/last")
     @JsonView(OutputEntityJsonView.Basic.class)
     public DataResponse getLastRecord(@RequestParam("meter_id") Long meterId) {

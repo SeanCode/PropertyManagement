@@ -11,6 +11,7 @@ import cn.edu.cqupt.wyglzx.exception.NotExistsException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -36,6 +37,7 @@ public class RecordService {
         }
     }
 
+    // TODO 初始化tag
     public void input(Long meterId, Long time, Double value, String reader, String remark) {
         if (value == null || value < 0) {
             throw new InvalidParamsException("value");
@@ -110,6 +112,62 @@ public class RecordService {
         if (StringUtils.isNotBlank(remark)) {
             recordEntity.setRemark(remark);
         }
+        recordDao.save(recordEntity);
+    }
+
+    public List<RecordEntity> getPendingList(Integer page) {
+
+        return recordDao.getPendingList(page * 10);
+    }
+
+    /**
+     * 返回审核历史
+     *
+     * @param page 页数 从0开始
+     * @param all  返回所有人审核的还是仅自己审核的
+     * @return 列表
+     */
+    public List<RecordEntity> getCheckedList(Integer page, Boolean all) {
+        if (all) {
+            return recordDao.getAllCheckedList(page * 10);
+        }
+        return recordDao.getCheckedListByAdmin(authService.getAuthentication().getId(), page * 10);
+    }
+
+    @Transactional
+    public void checkRecord(Long id, Integer status) {
+        RecordEntity recordEntity = recordDao.getRecordById(id);
+        if (recordEntity == null) {
+            throw new NotExistsException();
+        }
+        if (recordEntity.getType() != RecordEntity.TYPE_TEMP || recordEntity.getStatus() != 0) {
+            throw new NotAllowedException();
+        }
+        Long adminId = authService.getAuthentication().getId();
+        recordEntity.setReviewerId(adminId);
+        recordEntity.setStatus(status < 0 ? RecordEntity.STATUS_REJECTED : RecordEntity.STATUS_APPROVED);
+
+        RecordEntity archived = recordDao.getArchivedRecord(recordEntity.getMeterId(), recordEntity.getYear(), recordEntity.getMonth());
+        boolean flag = false;
+        if (archived == null) {
+            archived = new RecordEntity();
+            archived.setType(RecordEntity.TYPE_ARCHIVE);
+            archived.setOperatorId(adminId);
+            archived.setNodeId(recordEntity.getNodeId());
+            archived.setMeterId(recordEntity.getMeterId());
+            archived.setMeterType(recordEntity.getMeterType());
+            archived.setCreateTime(Util.time());
+            archived.setYear(recordEntity.getYear());
+            archived.setMonth(recordEntity.getMonth());
+            archived.setBegin(recordEntity.getBegin());
+            archived.setTime(Util.time());
+            flag = true;
+        }
+        archived.setEnd(recordEntity.getEnd());
+        archived.setReviewerId(adminId);
+        archived.setUpdateTime(flag ? archived.getCreateTime() : Util.time());
+
+        recordDao.save(archived);
         recordDao.save(recordEntity);
     }
 }

@@ -18,6 +18,9 @@ public interface RecordDao extends JpaRepository<RecordEntity, Long> {
     @Query(value = "select * from record where id = :id and weight >= 0", nativeQuery = true)
     RecordEntity getRecordById(@Param("id") Long id);
 
+    @Query(value = "select * from record where meter_id = :meter_id and type = 1 and year = :year and month = :month and weight >= 0 limit 0,1", nativeQuery = true)
+    RecordEntity getArchivedRecord(@Param("meter_id") Long meterId, @Param("year") Integer year, @Param("month") Integer month);
+
     @Query(value = "select * from record where meter_id = :meter_id and time = :time and type = 2 and weight >= 0 limit 0,1", nativeQuery = true)
     RecordEntity getByMeterIdAndTime(@Param("meter_id") Long meterId, @Param("time") Long time);
 
@@ -26,5 +29,17 @@ public interface RecordDao extends JpaRepository<RecordEntity, Long> {
 
     @Query(value = "select * from record where meter_id = :meter_id and year = :year and month = :month and type = 1 and weight >= 0 limit 0,1", nativeQuery = true)
     RecordEntity getMeterYearMonthRecord(@Param("meter_id") Long meterId, @Param("year") Integer year, @Param("month") Integer month);
+
+    @Query(value = "select * from record where type = 2 and weight >= 0 and status = 0 and id >= " +
+            "(select id from record where type = 2 and weight >= 0 and status = 0 limit :offset,1) limit 10", nativeQuery = true)
+    List<RecordEntity> getPendingList(@Param("offset") Integer offset);
+
+    @Query(value = "select * from record where type = 2 and weight >= 0 and status != 0 and id >= " +
+            "(select id from record where type = 2 and status != 0 and weight >= 0 limit :offset,1) limit 10", nativeQuery = true)
+    List<RecordEntity> getAllCheckedList(@Param("offset") Integer offset);
+
+    @Query(value = "select * from record where type = 2 and weight >= 0 and status != 0 and operator_id = :operator_id and id >= " +
+            "(select id from record where type = 2 and weight >= 0 and status != 0 and operator_id = :operator_id limit :offset,1) limit 10", nativeQuery = true)
+    List<RecordEntity> getCheckedListByAdmin(@Param("operator_id") Long operatorId, @Param("offset") Integer offset);
 
 }
