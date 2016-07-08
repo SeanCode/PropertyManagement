@@ -5,6 +5,7 @@ import cn.edu.cqupt.wyglzx.common.Util;
 import cn.edu.cqupt.wyglzx.dao.AdminDao;
 import cn.edu.cqupt.wyglzx.entity.AdminEntity;
 import cn.edu.cqupt.wyglzx.exception.ExistsException;
+import cn.edu.cqupt.wyglzx.exception.NotAllowedException;
 import cn.edu.cqupt.wyglzx.exception.NotExistsException;
 import cn.edu.cqupt.wyglzx.exception.WrongPasswordException;
 import org.apache.commons.lang3.StringUtils;
@@ -32,14 +33,14 @@ public class AdminService {
         return admin;
     }
 
-    public AdminEntity addAdmin(String name, String password, String username, Integer privilege) throws InvalidKeySpecException, NoSuchAlgorithmException {
+    public AdminEntity addAdmin(String name, String username, Integer privilege) throws InvalidKeySpecException, NoSuchAlgorithmException {
         AdminEntity admin = adminDao.existByName(name);
         if (admin != null) {
             throw new ExistsException();
         }
         admin = new AdminEntity();
         admin.setName(name);
-        admin.setPassword(PasswordHash.createHash(password));
+        admin.setPassword(PasswordHash.createHash("123456"));
         if (StringUtils.isNotBlank(username)) {
             admin.setUsername(username);
         }
@@ -117,13 +118,13 @@ public class AdminService {
         return admin;
     }
 
-    public AdminEntity resetPassword(String name, String password) throws InvalidKeySpecException, NoSuchAlgorithmException {
+    public AdminEntity resetPassword(Long id) throws InvalidKeySpecException, NoSuchAlgorithmException {
 
-        AdminEntity admin = adminDao.existByName(name);
+        AdminEntity admin = adminDao.existsById(id);
         if (admin == null) {
             throw new NotExistsException();
         }
-        admin.setPassword(PasswordHash.createHash(password));
+        admin.setPassword(PasswordHash.createHash("123456"));
         admin.setUpdateTime(Util.time());
 
         admin = adminDao.save(admin);
@@ -134,4 +135,49 @@ public class AdminService {
         return adminDao.list();
     }
 
+    public void updateAdminStatus(Long id, Integer status) {
+
+        AdminEntity admin = adminDao.existsById(id);
+        if (admin == null) {
+            throw new NotExistsException();
+        }
+        admin.setStatus(status);
+        admin.setUpdateTime(Util.time());
+
+        adminDao.save(admin);
+    }
+
+    public void deleteAdmin(Long id) {
+
+        AdminEntity admin = adminDao.existsById(id);
+        if (admin == null) {
+            throw new NotExistsException();
+        }
+        admin.setWeight(-1);
+        admin.setUpdateTime(Util.time());
+
+        adminDao.save(admin);
+    }
+
+    public AdminEntity getAdminInfo(Long id) {
+        AdminEntity admin = adminDao.existsById(id);
+        if (admin == null) {
+            throw new NotExistsException();
+        }
+        return admin;
+    }
+
+    public void updateAdminPrivilege(Long id, Integer index) {
+
+        AdminEntity admin = adminDao.existsById(id);
+        if (admin == null) {
+            throw new NotExistsException();
+        }
+        if (admin.getStatus() != AdminEntity.STATUS_NORMAL) {
+            throw new NotAllowedException("账户已锁定或受保护");
+        }
+
+        admin.setPrivilege(admin.getPrivilege() ^ (long)Math.pow(2, index));
+        adminDao.save(admin);
+    }
 }

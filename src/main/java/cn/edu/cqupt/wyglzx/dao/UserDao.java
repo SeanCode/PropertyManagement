@@ -22,4 +22,7 @@ public interface UserDao extends JpaRepository<UserEntity, Long> {
 
     @Query(value = "select * from user where id_card = :id_card and weight >= 0", nativeQuery = true)
     UserEntity getUserByIdCard(@Param("id_card") String idCard);
+
+    @Query(value = "select count(*) from user where weight >= 0", nativeQuery = true)
+    Integer getUserAmount();
 }

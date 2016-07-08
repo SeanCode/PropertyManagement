@@ -34,6 +34,9 @@ public interface RecordDao extends JpaRepository<RecordEntity, Long> {
             "(select id from record where type = 2 and weight >= 0 and status = 0 limit :offset,1) limit 10", nativeQuery = true)
     List<RecordEntity> getPendingList(@Param("offset") Integer offset);
 
+    @Query(value = "select count(*) from record where type = 2 and weight >= 0 and status = 0", nativeQuery = true)
+    Integer getPendingCount();
+
     @Query(value = "select * from record where type = 2 and weight >= 0 and status != 0 and id >= " +
             "(select id from record where type = 2 and status != 0 and weight >= 0 limit :offset,1) limit 10", nativeQuery = true)
     List<RecordEntity> getAllCheckedList(@Param("offset") Integer offset);

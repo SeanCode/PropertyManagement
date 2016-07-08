@@ -1,6 +1,7 @@
 package cn.edu.cqupt.wyglzx.entity;
 
 import cn.edu.cqupt.wyglzx.common.OutputEntityJsonView;
+import cn.edu.cqupt.wyglzx.model.AdminAuth;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 
@@ -16,10 +17,18 @@ public class AdminEntity {
     private String name = "";
     private String password = "";
     private String username = "";
-    private int privilege = 0;
+    private long privilege = 0;
+    private int status = STATUS_NORMAL;
     private int weight = 0;
     private long createTime = 0L;
     private long updateTime = 0L;
+
+    private String statusName = "";
+    private AdminAuth adminAuth;
+
+    public static final int STATUS_NORMAL = 0;
+    public static final int STATUS_BLOCK = -1;
+    public static final int STATUS_PROTECTED = 1;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -72,12 +81,57 @@ public class AdminEntity {
     @Column(name = "privilege", nullable = false)
     @JsonProperty("privilege")
     @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
-    public int getPrivilege() {
+    public long getPrivilege() {
         return privilege;
     }
 
-    public void setPrivilege(int privilege) {
+    public void setPrivilege(long privilege) {
         this.privilege = privilege;
+    }
+
+    @Transient
+    @JsonProperty("auth")
+    @JsonView({OutputEntityJsonView.Detail.class})
+    public AdminAuth getAdminAuth() {
+        return new AdminAuth(privilege);
+    }
+
+    public void setAdminAuth(AdminAuth adminAuth) {
+        this.adminAuth = adminAuth;
+    }
+
+    @Basic
+    @Column(name = "status", nullable = false)
+    @JsonProperty("status")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    @Transient
+    @JsonProperty("status_name")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    public String getStatusName() {
+        switch (status) {
+            case STATUS_BLOCK:
+                statusName = "已锁定";
+                break;
+            case STATUS_NORMAL:
+                statusName = "正常";
+                break;
+            case STATUS_PROTECTED:
+                statusName = "受保护";
+                break;
+        }
+        return statusName;
+    }
+
+    public void setStatusName(String statusName) {
+        this.statusName = statusName;
     }
 
     @Basic
@@ -141,7 +195,7 @@ public class AdminEntity {
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (password != null ? password.hashCode() : 0);
         result = 31 * result + (username != null ? username.hashCode() : 0);
-        result = 31 * result + privilege;
+        result = 31 * result + (int) (privilege ^ (privilege >>> 32));
         result = 31 * result + weight;
         result = 31 * result + (int) (createTime ^ (createTime >>> 32));
         result = 31 * result + (int) (updateTime ^ (updateTime >>> 32));

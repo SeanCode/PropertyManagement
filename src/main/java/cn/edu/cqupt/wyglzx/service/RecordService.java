@@ -170,4 +170,9 @@ public class RecordService {
         recordDao.save(archived);
         recordDao.save(recordEntity);
     }
+
+    public Integer getPendingCount() {
+
+        return recordDao.getPendingCount();
+    }
 }

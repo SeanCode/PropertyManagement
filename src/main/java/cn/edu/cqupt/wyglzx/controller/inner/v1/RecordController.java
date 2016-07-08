@@ -59,6 +59,13 @@ public class RecordController {
         return new DataResponse().put("pending_list", recordService.getPendingList(page));
     }
 
+    @RequestMapping("/pending-count")
+    @JsonView(OutputEntityJsonView.Basic.class)
+    public DataResponse getPendingCount() {
+
+        return new DataResponse().put("pending_count", recordService.getPendingCount());
+    }
+
     @RequestMapping("/list-checked")
     @JsonView(OutputEntityJsonView.Detail.class)
     public DataResponse getListChecked(@RequestParam(value = "page", required = false, defaultValue = "0") Integer page,

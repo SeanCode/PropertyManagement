@@ -65,4 +65,10 @@ public class UserController {
         return new DataResponse().put("user", userService.addUser(name, departmentId, username, phone, idCard, schoolCard, remark));
     }
 
+    @RequestMapping("/amount")
+    @JsonView(OutputEntityJsonView.Basic.class)
+    public DataResponse getUserAmount() {
+        return new DataResponse().put("user_amount", userService.getUserAmount());
+    }
+
 }

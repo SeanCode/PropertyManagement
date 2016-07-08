@@ -22,4 +22,7 @@ public interface AdminDao extends JpaRepository<AdminEntity, Long> {
     @Query(value = "select * from admin where name = :name and weight >= 0 limit 0, 1", nativeQuery = true)
     AdminEntity existByName(@Param("name") String name);
 
+    @Query(value = "select * from admin where id = :id and weight >= 0", nativeQuery = true)
+    AdminEntity existsById(@Param("id") Long id);
+
 }

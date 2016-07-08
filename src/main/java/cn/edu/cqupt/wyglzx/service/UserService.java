@@ -104,4 +104,8 @@ public class UserService {
 
         return userEntity;
     }
+
+    public Integer getUserAmount() {
+        return userDao.getUserAmount();
+    }
 }
