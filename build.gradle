@@ -14,13 +14,16 @@ buildscript {
 
 apply plugin: 'java'
 apply plugin: 'spring-boot'
-apply plugin: 'war'
+//apply plugin: 'war'
 apply plugin: 'idea'
 
-war {
+jar {
     baseName = 'api'
     version = '0.0.1-SNAPSHOT'
 }
+
+bootRepackage.withJarTask = jar
+
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8

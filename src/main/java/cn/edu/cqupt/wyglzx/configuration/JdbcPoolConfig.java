@@ -1,5 +1,6 @@
 package cn.edu.cqupt.wyglzx.configuration;
 
+import cn.edu.cqupt.wyglzx.common.Config;
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -45,13 +46,13 @@ public class JdbcPoolConfig {
 
     @Bean
     @Primary
-    @ConfigurationProperties(prefix="datasource.mysql")
+    @ConfigurationProperties(prefix = "datasource.mysql")
     public DataSource dataSource() {
         DataSource dataSource = new DataSource();
         dataSource.setDriverClassName(driverClassName);
-        dataSource.setUrl(url);
-        dataSource.setUsername(username);
-        dataSource.setPassword(password);
+        dataSource.setUrl(Config.IS_DEBUG ? Config.DEBUG_DB_URL : url);
+        dataSource.setUsername(Config.IS_DEBUG ? Config.DEBUG_DB_USER : username);
+        dataSource.setPassword(Config.IS_DEBUG ? Config.DEBUG_DB_PASSWORD : password);
         dataSource.setInitialSize(initialSize);
         dataSource.setMaxActive(maxActive);
         dataSource.setMinIdle(minIdle);
