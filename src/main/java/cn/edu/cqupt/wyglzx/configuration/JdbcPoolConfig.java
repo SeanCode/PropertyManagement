@@ -17,11 +17,17 @@ public class JdbcPoolConfig {
     @Value("${spring.jdbc-pool.url}")
     private String url;
 
+    @Value("${spring.jdbc-pool.url-debug}")
+    private String urlDebug;
+
     @Value("${spring.jdbc-pool.username}")
     private String username;
 
     @Value("${spring.jdbc-pool.password}")
     private String password;
+
+    @Value("${spring.jdbc-pool.password-debug}")
+    private String passwordDebug;
 
     @Value("${spring.jpa.database}")
     private String database;
@@ -50,9 +56,9 @@ public class JdbcPoolConfig {
     public DataSource dataSource() {
         DataSource dataSource = new DataSource();
         dataSource.setDriverClassName(driverClassName);
-        dataSource.setUrl(Config.IS_DEBUG ? Config.DEBUG_DB_URL : url);
-        dataSource.setUsername(Config.IS_DEBUG ? Config.DEBUG_DB_USER : username);
-        dataSource.setPassword(Config.IS_DEBUG ? Config.DEBUG_DB_PASSWORD : password);
+        dataSource.setUrl(Config.IS_DEBUG ? urlDebug : url);
+        dataSource.setUsername(username);
+        dataSource.setPassword(Config.IS_DEBUG ? passwordDebug : password);
         dataSource.setInitialSize(initialSize);
         dataSource.setMaxActive(maxActive);
         dataSource.setMinIdle(minIdle);
