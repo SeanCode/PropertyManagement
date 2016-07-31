@@ -5,6 +5,7 @@ import cn.edu.cqupt.wyglzx.common.OutputEntityJsonView;
 import cn.edu.cqupt.wyglzx.service.AdminService;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,8 +16,9 @@ import java.security.spec.InvalidKeySpecException;
 /**
  * Created by cc on 16/5/29.
  */
-@RestController
+@RestController("Private.AdminController")
 @RequestMapping("/api/private/v1/admin")
+@Component
 public class AdminController {
 
     @Autowired

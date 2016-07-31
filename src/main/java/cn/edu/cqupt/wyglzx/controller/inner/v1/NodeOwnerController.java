@@ -7,6 +7,7 @@ import cn.edu.cqupt.wyglzx.exception.InvalidParamsException;
 import cn.edu.cqupt.wyglzx.service.NodeOwnerService;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,8 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * Created by cc on 16/6/25.
  */
-@RestController
+@RestController("Private.NodeOwnerController")
 @RequestMapping("/api/private/v1/node-owner")
+@Component
 public class NodeOwnerController {
 
     @Autowired

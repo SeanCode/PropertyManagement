@@ -5,6 +5,7 @@ import cn.edu.cqupt.wyglzx.common.OutputEntityJsonView;
 import cn.edu.cqupt.wyglzx.service.NodeService;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,8 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * Created by cc on 16/6/25.
  */
-@RestController
+@RestController("Private.NodeController")
 @RequestMapping("/api/private/v1/node")
+@Component
 public class NodeController {
 
     @Autowired

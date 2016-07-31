@@ -20,6 +20,10 @@
     <mapping class="cn.edu.cqupt.wyglzx.entity.RentEntity"/>
     <mapping class="cn.edu.cqupt.wyglzx.entity.NodeOwnerEntity"/>
     <mapping class="cn.edu.cqupt.wyglzx.entity.InstitutionEntity"/>
+    <mapping class="cn.edu.cqupt.wyglzx.entity.ArticleEntity"/>
+    <mapping class="cn.edu.cqupt.wyglzx.entity.CoverEntity"/>
+    <mapping class="cn.edu.cqupt.wyglzx.entity.OrgEntity"/>
+    <mapping class="cn.edu.cqupt.wyglzx.entity.PhotoEntity"/>
     <!-- DB schema will be updated if needed -->
     <!-- <property name="hbm2ddl.auto">update</property> -->
   </session-factory>
