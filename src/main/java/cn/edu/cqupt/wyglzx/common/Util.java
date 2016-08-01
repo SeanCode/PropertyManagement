@@ -12,6 +12,12 @@ public class Util {
         return (System.currentTimeMillis() / 1000);
     }
 
+    public static boolean isLatestDays(Long time, int day) {
+        Long diff = Math.abs(time() - time);
+
+        return 3600 * 24 * day > diff;
+    }
+
     public static int parseInt(Object obj) {
         try {
             return (int) Double.parseDouble("" + obj);

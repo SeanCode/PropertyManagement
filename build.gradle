@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        springBootVersion = '1.4.0.M3'
+        springBootVersion = '1.4.0.RELEASE'
     }
     repositories {
         mavenCentral()
@@ -28,6 +28,7 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 repositories {
+    jcenter()
     mavenCentral()
     maven { url "https://repo.spring.io/snapshot" }
     maven { url "https://repo.spring.io/milestone" }
@@ -51,6 +52,5 @@ dependencies {
     compile('com.google.guava:guava:19.0')
     compile('org.apache.tomcat:tomcat-jdbc')
     compile('mysql:mysql-connector-java')
-
     providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
 }

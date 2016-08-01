@@ -1,10 +1,12 @@
 package cn.edu.cqupt.wyglzx.entity;
 
 import cn.edu.cqupt.wyglzx.common.OutputEntityJsonView;
+import cn.edu.cqupt.wyglzx.common.Util;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import javax.persistence.*;
+import java.util.Calendar;
 
 /**
  * Created by cc on 16/7/31.
@@ -14,15 +16,33 @@ import javax.persistence.*;
 public class ArticleEntity {
 
     private long id;
-    private long adminId = 0;
-    private int type = 0;
-    private String title = "";
-    private String content = "";
-    private String downloadUrl = "";
-    private int read = 0;
-    private int weight = 0;
-    private long createTime = 0;
-    private long updateTime = 0;
+    private long    adminId     = 0;
+    private int     type        = 0;
+    private String  title       = "";
+    private String  content     = "";
+    private String  downloadUrl = "";
+    private int     read        = 0;
+    private int     weight      = 0;
+    private long    createTime  = 0;
+    private long    updateTime  = 0;
+    private Boolean isNew       = false;
+
+    //服务指南
+    public static final int TYPE_GUIDE          = 10000;
+    public static final int TYPE_GUIDE_RULE     = 10001;//政策法规
+    public static final int TYPE_GUIDE_WORK     = 10002;//工作简报
+    public static final int TYPE_GUIDE_PROCESS  = 10003;//流程指南
+    public static final int TYPE_GUIDE_DOWNLOAD = 10004;//相关下载
+    //新闻
+    public static final int TYPE_NEWS           = 20000;
+    public static final int TYPE_NEWS_HOT       = 20001;//新闻热点
+    public static final int TYPE_NEWS_POST      = 20002;//公示公告
+    //安检日志
+    public static final int TYPE_LOG            = 30000;
+    public static final int TYPE_LOG_DEVICE     = 30001;//特种设备
+    public static final int TYPE_LOG_TEACHING   = 30002;//教学巡查
+    public static final int TYPE_LOG_DEPARTMENT = 30003;//公寓巡查
+    public static final int TYPE_LOG_PROPERTY   = 30004;//物业巡查
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -75,10 +95,10 @@ public class ArticleEntity {
 
     @Basic
     @JsonProperty("content")
-    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    @JsonView({OutputEntityJsonView.Basic.class})
     @Column(name = "content", nullable = false, length = -1)
     public String getContent() {
-        return content;
+        return content.replaceAll("\r\n", "<br>");
     }
 
     public void setContent(String content) {
@@ -122,9 +142,9 @@ public class ArticleEntity {
     }
 
     @Basic
-    @JsonProperty("createTime")
+    @JsonProperty("create_time")
     @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
-    @Column(name = "createTime", nullable = false)
+    @Column(name = "create_time", nullable = false)
     public long getCreateTime() {
         return createTime;
     }
@@ -143,6 +163,18 @@ public class ArticleEntity {
 
     public void setUpdateTime(long updateTime) {
         this.updateTime = updateTime;
+    }
+
+    @Transient
+    @JsonProperty("is_new")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    public Boolean getNew() {
+        isNew = Util.isLatestDays(createTime, 3);
+        return isNew;
+    }
+
+    public void setNew(Boolean aNew) {
+        isNew = aNew;
     }
 
     @Override
