@@ -4,6 +4,8 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Sets;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class Util {
@@ -16,6 +18,14 @@ public class Util {
         Long diff = Math.abs(time() - time);
 
         return 3600 * 24 * day > diff;
+    }
+
+    public static String getTimeString(DateFormat dateFormat, long timeStamp) {
+        return dateFormat.format(new Date(timeStamp * 1000));
+    }
+
+    public static String getTimeString(long timeStamp) {
+        return new SimpleDateFormat("yyyy-MM-dd").format(new Date(timeStamp * 1000));
     }
 
     public static int parseInt(Object obj) {
@@ -110,6 +120,10 @@ public class Util {
 //        idList.add(3 + "");
 //
 //        System.out.println(implodeIdString(idList));
+//    }
+//
+//    public static void main(String[] args) {
+//        System.out.println(Util.getTimeString(new SimpleDateFormat("yyyy-MM-dd"), 1471181486));
 //    }
 
 }

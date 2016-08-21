@@ -2,107 +2,53 @@ package cn.edu.cqupt.wyglzx.controller.outer.v1;
 
 import cn.edu.cqupt.wyglzx.common.DataResponse;
 import cn.edu.cqupt.wyglzx.common.OutputEntityJsonView;
+import cn.edu.cqupt.wyglzx.entity.ArticleEntity;
 import cn.edu.cqupt.wyglzx.service.ArticleService;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Created by cc on 16/7/30.
  */
 @RestController("Public.ArticleController")
-@RequestMapping("/api/public/v1/article")
+@RequestMapping("/api/public/v1/articles")
 @Component
 public class ArticleController {
 
     @Autowired
     ArticleService articleService;
 
-    @RequestMapping("/list")
-    @JsonView(OutputEntityJsonView.Detail.class)
+    @RequestMapping(method = RequestMethod.GET, value = "/")
+    @JsonView(OutputEntityJsonView.Basic.class)
     public DataResponse getArticleList() {
 
-        return new DataResponse().put("article", "list");
+        DataResponse response = new DataResponse();
+        response.put("article_list", articleService.getLatest());
+        return response;
     }
 
-    @RequestMapping("/latest")
+    @RequestMapping(method = RequestMethod.GET, value = "/{type}")
     @JsonView(OutputEntityJsonView.Basic.class)
-    public DataResponse getLatest() {
+    public DataResponse getArticleList(@PathVariable("type") Integer type, @RequestParam(value = "page", required = false, defaultValue = "0") Integer page) {
 
-        return new DataResponse().put("article_list", articleService.getLatest());
+        DataResponse response = new DataResponse();
+        response.put("article_list", articleService.getArticleList(type, page));
+        response.put("count", articleService.getListAmountByType(type));
+        return response;
     }
 
-    @RequestMapping("/guide-process-list")
-    @JsonView(OutputEntityJsonView.Basic.class)
-    public DataResponse getGuideProcessList(@RequestParam(value = "page", required = false, defaultValue = "0") Integer page) {
+    @RequestMapping(method = RequestMethod.GET, value = "/{type}/{id}")
+    @JsonView(OutputEntityJsonView.Detail.class)
+    public DataResponse getArticleContent(@PathVariable("type") Integer type, @PathVariable("id") Long id) {
 
-        return new DataResponse().put("article_list", articleService.getGuideProcessList(page));
-    }
-
-    @RequestMapping("/guide-work-list")
-    @JsonView(OutputEntityJsonView.Basic.class)
-    public DataResponse getGuideWorkList(@RequestParam(value = "page", required = false, defaultValue = "0") Integer page) {
-
-        return new DataResponse().put("article_list", articleService.getGuideWorkList(page));
-    }
-
-    @RequestMapping("/guide-rule-list")
-    @JsonView(OutputEntityJsonView.Basic.class)
-    public DataResponse getGuideRuleList(@RequestParam(value = "page", required = false, defaultValue = "0") Integer page) {
-
-        return new DataResponse().put("article_list", articleService.getGuideRuleList(page));
-    }
-
-    @RequestMapping("/guide-download-list")
-    @JsonView(OutputEntityJsonView.Basic.class)
-    public DataResponse getGuideDownloadList(@RequestParam(value = "page", required = false, defaultValue = "0") Integer page) {
-
-        return new DataResponse().put("article_list", articleService.getGuideDownloadList(page));
-    }
-
-    @RequestMapping("/news-hot-list")
-    @JsonView(OutputEntityJsonView.Basic.class)
-    public DataResponse getNewsHotList(@RequestParam(value = "page", required = false, defaultValue = "0") Integer page) {
-
-        return new DataResponse().put("article_list", articleService.getNewsHotList(page));
-    }
-
-    @RequestMapping("/news-post-list")
-    @JsonView(OutputEntityJsonView.Basic.class)
-    public DataResponse getNewsPostList(@RequestParam(value = "page", required = false, defaultValue = "0") Integer page) {
-
-        return new DataResponse().put("article_list", articleService.getNewsHotList(page));
-    }
-
-    @RequestMapping("/log-device-list")
-    @JsonView(OutputEntityJsonView.Basic.class)
-    public DataResponse getLogDeviceList(@RequestParam(value = "page", required = false, defaultValue = "0") Integer page) {
-
-        return new DataResponse().put("article_list", articleService.getLogDeviceList(page));
-    }
-
-    @RequestMapping("/log-teaching-list")
-    @JsonView(OutputEntityJsonView.Basic.class)
-    public DataResponse getLogTeachingList(@RequestParam(value = "page", required = false, defaultValue = "0") Integer page) {
-
-        return new DataResponse().put("article_list", articleService.getLogTeachingList(page));
-    }
-
-    @RequestMapping("/log-department-list")
-    @JsonView(OutputEntityJsonView.Basic.class)
-    public DataResponse getLogDepartmentList(@RequestParam(value = "page", required = false, defaultValue = "0") Integer page) {
-
-        return new DataResponse().put("article_list", articleService.getLogDepartmentList(page));
-    }
-
-    @RequestMapping("/log-property-list")
-    @JsonView(OutputEntityJsonView.Basic.class)
-    public DataResponse getLogPropertyList(@RequestParam(value = "page", required = false, defaultValue = "0") Integer page) {
-
-        return new DataResponse().put("article_list", articleService.getLogPropertyList(page));
+        DataResponse response = new DataResponse();
+        ArticleEntity article = articleService.getArticleContent(type, id);
+        response.put("article_content", article);
+        response.put("article_previous", articleService.getArticlePrevious(article.getCreateTime(), article.getType()));
+        response.put("article_next", articleService.getArticleNext(article.getCreateTime(), article.getType()));
+        return response;
     }
 
 }

@@ -4,6 +4,8 @@ import cn.edu.cqupt.wyglzx.common.OutputEntityJsonView;
 import cn.edu.cqupt.wyglzx.common.Util;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 import javax.persistence.*;
 import java.util.Calendar;
@@ -26,6 +28,9 @@ public class ArticleEntity {
     private long    createTime  = 0;
     private long    updateTime  = 0;
     private Boolean isNew       = false;
+
+    private AdminEntity admin;
+    private String      createTimeFormated;
 
     //服务指南
     public static final int TYPE_GUIDE          = 10000;
@@ -69,6 +74,19 @@ public class ArticleEntity {
         this.adminId = adminId;
     }
 
+    @OneToOne()
+    @NotFound(action = NotFoundAction.IGNORE)
+    @JoinColumn(name = "admin_id", insertable = false, updatable = false)
+    @JsonProperty("admin")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    public AdminEntity getAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(AdminEntity admin) {
+        this.admin = admin;
+    }
+
     @Basic
     @JsonProperty("type")
     @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
@@ -95,7 +113,7 @@ public class ArticleEntity {
 
     @Basic
     @JsonProperty("content")
-    @JsonView({OutputEntityJsonView.Basic.class})
+    @JsonView({OutputEntityJsonView.Detail.class})
     @Column(name = "content", nullable = false, length = -1)
     public String getContent() {
         return content.replaceAll("\r\n", "<br>");
@@ -120,7 +138,7 @@ public class ArticleEntity {
     @Basic
     @JsonProperty("read")
     @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
-    @Column(name = "read", nullable = false)
+    @Column(name = "[read]", nullable = false)
     public int getRead() {
         return read;
     }
@@ -175,6 +193,19 @@ public class ArticleEntity {
 
     public void setNew(Boolean aNew) {
         isNew = aNew;
+    }
+
+    @Transient
+    @JsonProperty("create_time_formated")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    public String getCreateTimeFormated() {
+
+        createTimeFormated = Util.getTimeString(getCreateTime());
+        return createTimeFormated;
+    }
+
+    public void setCreateTimeFormated(String createTimeFormated) {
+        this.createTimeFormated = createTimeFormated;
     }
 
     @Override

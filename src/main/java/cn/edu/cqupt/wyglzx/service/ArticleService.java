@@ -1,9 +1,12 @@
 package cn.edu.cqupt.wyglzx.service;
 
+import cn.edu.cqupt.wyglzx.common.Util;
 import cn.edu.cqupt.wyglzx.dao.ArticleDao;
 import cn.edu.cqupt.wyglzx.entity.ArticleEntity;
+import cn.edu.cqupt.wyglzx.exception.NotExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -11,6 +14,7 @@ import java.util.List;
  * Created by cc on 16/7/31.
  */
 @Component
+@Transactional
 public class ArticleService {
 
     @Autowired
@@ -20,55 +24,38 @@ public class ArticleService {
         return articleDao.getLatestArticles();
     }
 
-    //流程指南列表
-    public List<ArticleEntity> getGuideProcessList(Integer page) {
-
-        return articleDao.getArticleListByTypeAndOffset(ArticleEntity.TYPE_GUIDE_PROCESS, page * 10);
+    public List<ArticleEntity> getArticleList(Integer type, Integer page) {
+        if (page <= 1) {
+            page = 1;
+        }
+        if (type == 20000) {
+            return articleDao.getNewsListByOffset((page - 1) * 10);
+        }
+        return articleDao.getArticleListByTypeAndOffset(type, (page - 1) * 10);
     }
 
-    public List<ArticleEntity> getGuideRuleList(Integer page) {
-
-        return articleDao.getArticleListByTypeAndOffset(ArticleEntity.TYPE_GUIDE_RULE, page * 10);
+    public Integer getListAmountByType(Integer type) {
+        return articleDao.getListAmountByType(type);
     }
 
-    public List<ArticleEntity> getGuideWorkList(Integer page) {
+    public ArticleEntity getArticleContent(Integer type, Long id) {
 
-        return articleDao.getArticleListByTypeAndOffset(ArticleEntity.TYPE_GUIDE_WORK, page * 10);
+        ArticleEntity articleEntity = articleDao.getArticleByIdAndType(id, type);
+        if (articleEntity == null) {
+            throw new NotExistsException();
+        }
+        articleEntity.setRead(articleEntity.getRead() + 1);
+        articleEntity.setUpdateTime(Util.time());
+        return articleDao.save(articleEntity);
     }
 
-    public List<ArticleEntity> getGuideDownloadList(Integer page) {
+    public ArticleEntity getArticlePrevious(Long createTime, Integer type) {
 
-        return articleDao.getArticleListByTypeAndOffset(ArticleEntity.TYPE_GUIDE_DOWNLOAD, page * 10);
+        return articleDao.getArticlePrevious(createTime, type);
     }
 
-    public List<ArticleEntity> getNewsHotList(Integer page) {
+    public ArticleEntity getArticleNext(Long createTime, Integer type) {
 
-        return articleDao.getArticleListByTypeAndOffset(ArticleEntity.TYPE_NEWS_HOT, page * 10);
+        return articleDao.getArticleNext(createTime, type);
     }
-
-    public List<ArticleEntity> getNewsPostList(Integer page) {
-
-        return articleDao.getArticleListByTypeAndOffset(ArticleEntity.TYPE_NEWS_POST, page * 10);
-    }
-
-    public List<ArticleEntity> getLogDeviceList(Integer page) {
-
-        return articleDao.getArticleListByTypeAndOffset(ArticleEntity.TYPE_LOG_DEVICE, page * 10);
-    }
-
-    public List<ArticleEntity> getLogTeachingList(Integer page) {
-
-        return articleDao.getArticleListByTypeAndOffset(ArticleEntity.TYPE_LOG_TEACHING, page * 10);
-    }
-
-    public List<ArticleEntity> getLogDepartmentList(Integer page) {
-
-        return articleDao.getArticleListByTypeAndOffset(ArticleEntity.TYPE_LOG_DEPARTMENT, page * 10);
-    }
-
-    public List<ArticleEntity> getLogPropertyList(Integer page) {
-
-        return articleDao.getArticleListByTypeAndOffset(ArticleEntity.TYPE_LOG_PROPERTY, page * 10);
-    }
-
 }
