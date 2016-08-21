@@ -24,6 +24,7 @@
     <mapping class="cn.edu.cqupt.wyglzx.entity.CoverEntity"/>
     <mapping class="cn.edu.cqupt.wyglzx.entity.OrgEntity"/>
     <mapping class="cn.edu.cqupt.wyglzx.entity.PhotoEntity"/>
+    <mapping class="cn.edu.cqupt.wyglzx.entity.AttachmentEntity"/>
     <!-- DB schema will be updated if needed -->
     <!-- <property name="hbm2ddl.auto">update</property> -->
   </session-factory>

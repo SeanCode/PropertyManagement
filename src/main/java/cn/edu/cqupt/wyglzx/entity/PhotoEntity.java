@@ -14,14 +14,16 @@ import javax.persistence.*;
 public class PhotoEntity {
 
     private long id;
-    private long adminId = 0;
-    private long coverId = 0;
-    private String url = "";
-    private String name = "";
-    private String content = "";
-    private int weight = 0;
-    private long createTime = 0;
-    private long updateTime = 0;
+    private long   adminId    = 0;
+    private long   coverId    = 0;
+    private String url        = "";
+    private String name       = "";
+    private String content    = "";
+    private int    weight     = 0;
+    private long   createTime = 0;
+    private long   updateTime = 0;
+
+    private CoverEntity cover;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -130,6 +132,17 @@ public class PhotoEntity {
 
     public void setUpdateTime(long updateTime) {
         this.updateTime = updateTime;
+    }
+
+    @Transient
+    @JsonProperty("cover")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    public CoverEntity getCover() {
+        return cover;
+    }
+
+    public void setCover(CoverEntity cover) {
+        this.cover = cover;
     }
 
     @Override

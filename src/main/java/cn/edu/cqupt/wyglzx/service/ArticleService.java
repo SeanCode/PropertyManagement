@@ -2,6 +2,7 @@ package cn.edu.cqupt.wyglzx.service;
 
 import cn.edu.cqupt.wyglzx.common.Util;
 import cn.edu.cqupt.wyglzx.dao.ArticleDao;
+import cn.edu.cqupt.wyglzx.dao.AttachmentDao;
 import cn.edu.cqupt.wyglzx.entity.ArticleEntity;
 import cn.edu.cqupt.wyglzx.exception.NotExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,9 @@ public class ArticleService {
 
     @Autowired
     ArticleDao articleDao;
+
+    @Autowired
+    AttachmentDao attachmentDao;
 
     public List<ArticleEntity> getLatest() {
         return articleDao.getLatestArticles();
@@ -43,6 +47,9 @@ public class ArticleService {
         ArticleEntity articleEntity = articleDao.getArticleByIdAndType(id, type);
         if (articleEntity == null) {
             throw new NotExistsException();
+        }
+        if (articleEntity.getAttachments().length() > 0) {
+            articleEntity.setAttachmentList(attachmentDao.getAttachments(articleEntity.getAttachments()));
         }
         articleEntity.setRead(articleEntity.getRead() + 1);
         articleEntity.setUpdateTime(Util.time());

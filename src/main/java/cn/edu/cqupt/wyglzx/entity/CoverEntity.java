@@ -13,6 +13,12 @@ import javax.persistence.*;
 @Table(name = "cover", schema = "sdq", catalog = "")
 public class CoverEntity {
 
+    public static final int TYPE_LEADER = 1;//领导关怀
+    public static final int TYPE_HORNER = 2;//荣誉奖励
+    public static final int TYPE_MEETING = 3;//会议纪实
+    public static final int TYPE_LATEST = 4;//物业动态
+    public static final int TYPE_SCHOOL = 5;//校园绿化
+
     private long id = 0;
     private long adminId = 0;
     private String name = "";
@@ -21,12 +27,7 @@ public class CoverEntity {
     private int weight = 0;
     private long createTime = 0;
     private long updateTime = 0;
-
-    public static final int TYPE_LEADER = 1;//领导关怀
-    public static final int TYPE_HORNER = 2;//荣誉奖励
-    public static final int TYPE_MEETING = 3;//会议纪实
-    public static final int TYPE_LATEST = 4;//物业动态
-    public static final int TYPE_SCHOOL = 5;//校园绿化
+    private int read;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -90,6 +91,18 @@ public class CoverEntity {
     }
 
     @Basic
+    @JsonProperty("read")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    @Column(name = "read", nullable = false)
+    public int getRead() {
+        return read;
+    }
+
+    public void setRead(int read) {
+        this.read = read;
+    }
+
+    @Basic
     @JsonProperty("weight")
     @JsonView({OutputEntityJsonView.Detail.class})
     @Column(name = "weight", nullable = false)
@@ -138,10 +151,10 @@ public class CoverEntity {
         if (weight != that.weight) return false;
         if (createTime != that.createTime) return false;
         if (updateTime != that.updateTime) return false;
+        if (read != that.read) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
-        if (coverUrl != null ? !coverUrl.equals(that.coverUrl) : that.coverUrl != null) return false;
+        return coverUrl != null ? coverUrl.equals(that.coverUrl) : that.coverUrl == null;
 
-        return true;
     }
 
     @Override
@@ -154,6 +167,7 @@ public class CoverEntity {
         result = 31 * result + weight;
         result = 31 * result + (int) (createTime ^ (createTime >>> 32));
         result = 31 * result + (int) (updateTime ^ (updateTime >>> 32));
+        result = 31 * result + read;
         return result;
     }
 }

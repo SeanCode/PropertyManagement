@@ -8,7 +8,9 @@ import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * Created by cc on 16/7/31.
@@ -16,21 +18,6 @@ import java.util.Calendar;
 @Entity
 @Table(name = "article", schema = "sdq", catalog = "")
 public class ArticleEntity {
-
-    private long id;
-    private long    adminId     = 0;
-    private int     type        = 0;
-    private String  title       = "";
-    private String  content     = "";
-    private String  downloadUrl = "";
-    private int     read        = 0;
-    private int     weight      = 0;
-    private long    createTime  = 0;
-    private long    updateTime  = 0;
-    private Boolean isNew       = false;
-
-    private AdminEntity admin;
-    private String      createTimeFormated;
 
     //服务指南
     public static final int TYPE_GUIDE          = 10000;
@@ -48,6 +35,25 @@ public class ArticleEntity {
     public static final int TYPE_LOG_TEACHING   = 30002;//教学巡查
     public static final int TYPE_LOG_DEPARTMENT = 30003;//公寓巡查
     public static final int TYPE_LOG_PROPERTY   = 30004;//物业巡查
+
+    private long id;
+    private long   adminId     = 0;
+    private int    type        = 0;
+    private String title       = "";
+    private String content     = "";
+    private String attachments = "";
+    private String img         = "";
+    private int    read        = 0;
+    private int    weight      = 0;
+    private long   createTime  = 0;
+    private long   updateTime  = 0;
+
+    private Boolean isNew = false;
+
+    private AdminEntity            admin;
+    private String                 createTimeFormated;
+    private List<AttachmentEntity> attachmentList;
+    private List<String>           imgList;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -124,15 +130,27 @@ public class ArticleEntity {
     }
 
     @Basic
-    @JsonProperty("download_url")
-    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
-    @Column(name = "download_url", nullable = false, length = 299)
-    public String getDownloadUrl() {
-        return downloadUrl;
+    @JsonProperty("img")
+    @JsonView({OutputEntityJsonView.Detail.class})
+    @Column(name = "img", nullable = false, length = 299)
+    public String getImg() {
+        return img;
     }
 
-    public void setDownloadUrl(String downloadUrl) {
-        this.downloadUrl = downloadUrl;
+    public void setImg(String img) {
+        this.img = img;
+    }
+
+    @Basic
+    @JsonProperty("attachments")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    @Column(name = "attachments", nullable = false, length = 299)
+    public String getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(String attachments) {
+        this.attachments = attachments;
     }
 
     @Basic
@@ -208,6 +226,30 @@ public class ArticleEntity {
         this.createTimeFormated = createTimeFormated;
     }
 
+    @Transient
+    @JsonProperty("attachment_list")
+    @JsonView({OutputEntityJsonView.Detail.class})
+    public List<AttachmentEntity> getAttachmentList() {
+
+        return attachmentList == null ? new ArrayList<>() : attachmentList;
+    }
+
+    public void setAttachmentList(List<AttachmentEntity> attachmentList) {
+        this.attachmentList = attachmentList;
+    }
+
+    @Transient
+    @JsonProperty("img_list")
+    @JsonView({OutputEntityJsonView.Detail.class})
+    public List<String> getImgList() {
+        imgList = Util.explodeUrlString(img);
+        return imgList;
+    }
+
+    public void setImgList(List<String> imgList) {
+        this.imgList = imgList;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -224,9 +266,13 @@ public class ArticleEntity {
         if (updateTime != that.updateTime) return false;
         if (title != null ? !title.equals(that.title) : that.title != null) return false;
         if (content != null ? !content.equals(that.content) : that.content != null) return false;
-        if (downloadUrl != null ? !downloadUrl.equals(that.downloadUrl) : that.downloadUrl != null) return false;
+        if (attachments != null ? !attachments.equals(that.attachments) : that.attachments != null) return false;
+        if (isNew != null ? !isNew.equals(that.isNew) : that.isNew != null) return false;
+        if (admin != null ? !admin.equals(that.admin) : that.admin != null) return false;
+        if (createTimeFormated != null ? !createTimeFormated.equals(that.createTimeFormated) : that.createTimeFormated != null)
+            return false;
+        return attachmentList != null ? attachmentList.equals(that.attachmentList) : that.attachmentList == null;
 
-        return true;
     }
 
     @Override
@@ -236,11 +282,15 @@ public class ArticleEntity {
         result = 31 * result + type;
         result = 31 * result + (title != null ? title.hashCode() : 0);
         result = 31 * result + (content != null ? content.hashCode() : 0);
-        result = 31 * result + (downloadUrl != null ? downloadUrl.hashCode() : 0);
+        result = 31 * result + (attachments != null ? attachments.hashCode() : 0);
         result = 31 * result + read;
         result = 31 * result + weight;
         result = 31 * result + (int) (createTime ^ (createTime >>> 32));
         result = 31 * result + (int) (updateTime ^ (updateTime >>> 32));
+        result = 31 * result + (isNew != null ? isNew.hashCode() : 0);
+        result = 31 * result + (admin != null ? admin.hashCode() : 0);
+        result = 31 * result + (createTimeFormated != null ? createTimeFormated.hashCode() : 0);
+        result = 31 * result + (attachmentList != null ? attachmentList.hashCode() : 0);
         return result;
     }
 }

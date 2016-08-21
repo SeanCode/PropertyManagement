@@ -106,6 +106,15 @@ public class Util {
         return new ArrayList<>(idStringSet);
     }
 
+    public static List<String> explodeUrlString(String urlString) {
+        HashSet<String> idStringSet = Sets.newHashSet(Splitter.on(',')
+                .trimResults()
+                .omitEmptyStrings()
+                .split(urlString));
+
+        return new ArrayList<>(idStringSet);
+    }
+
 //    public static void main(String[] args) {
 //        System.out.println(time());
 //        String s = stickIdToIdString("|1|2|3|1|", 4L);
@@ -123,7 +132,7 @@ public class Util {
 //    }
 //
 //    public static void main(String[] args) {
-//        System.out.println(Util.getTimeString(new SimpleDateFormat("yyyy-MM-dd"), 1471181486));
+//        System.out.println(Util.explodeUrlString("a.com,b.com,c.com,"));
 //    }
 
 }
