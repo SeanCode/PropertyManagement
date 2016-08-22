@@ -22,10 +22,8 @@ public class ExceptionHandlerController {
         ErrorResponse errorResponse = new ErrorResponse(BaseException.ERROR_IN_INTERCEPTOR, "an error occurred");
 
         if (ex != null) {
-            String message = ExceptionUtils.getStackTrace(ex);
+            String message = ExceptionUtils.getMessage(ex);
             errorResponse.setMessage(message);
-
-            ex.printStackTrace();
         }
 
         if (e != null) {

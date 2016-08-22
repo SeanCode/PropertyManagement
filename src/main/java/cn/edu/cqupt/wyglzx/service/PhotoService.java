@@ -21,8 +21,16 @@ public class PhotoService {
     @Autowired
     PhotoDao photoDao;
 
-    public List<CoverEntity> getCoverList(Integer type) {
-        return coverDao.getCoverListByType(type);
+    public List<CoverEntity> getCoverList(Integer type, Integer page) {
+        if (page < 1) {
+            page = 1;
+        }
+        return coverDao.getCoverListByType(type, (page - 1) * 10);
+    }
+
+    public Integer getCoverAmount(Integer type) {
+
+        return coverDao.getCoverAmount(type);
     }
 
     public List<PhotoEntity> getLatestPhotos() {
@@ -38,6 +46,11 @@ public class PhotoService {
             page = 1;
         }
         return photoDao.getPhotoListByCover(coverId, (page - 1) * 10);
+    }
+
+    public Integer getPhotoAmount(Long coverId) {
+
+        return photoDao.getPhotoAmount(coverId);
     }
 
 }

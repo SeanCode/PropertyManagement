@@ -14,8 +14,11 @@ import java.util.List;
 @Repository
 public interface CoverDao extends JpaRepository<CoverEntity, Long> {
 
-    @Query(value = "select * from cover where type = :type and weight >= 0", nativeQuery = true)
-    List<CoverEntity> getCoverListByType(@Param("type") Integer type);
+    @Query(value = "select * from cover where type = :type and weight >= 0 order by create_time DESC limit :offset,4", nativeQuery = true)
+    List<CoverEntity> getCoverListByType(@Param("type") Integer type, @Param("offset") Integer offset);
+
+    @Query(value = "select count(*) from cover where type = :type and weight >= 0", nativeQuery = true)
+    Integer getCoverAmount(@Param("type") Integer type);
 
     @Query(value = "select * from cover where id = :id and weight >= 0", nativeQuery = true)
     CoverEntity getCoverById(@Param("id") Long id);

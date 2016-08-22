@@ -20,4 +20,6 @@ public interface PhotoDao extends JpaRepository<PhotoEntity, Long> {
     @Query(value = "select * from photo where cover_id = :cover_id and weight >= 0 order by create_time DESC, id DESC limit :offset,10", nativeQuery = true)
     List<PhotoEntity> getPhotoListByCover(@Param("cover_id") Long coverId, @Param("offset") Integer offset);
 
+    @Query(value = "select count(*) from photo where cover_id = :cover_id and weight >= 0", nativeQuery = true)
+    Integer getPhotoAmount(@Param("cover_id") Long coverId);
 }
