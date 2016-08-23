@@ -41,6 +41,10 @@ public class PhotoService {
         return photos;
     }
 
+    public List<CoverEntity> getLatestCovers() {
+        return coverDao.getCoverLatest();
+    }
+
     public List<PhotoEntity> getPhotos(Long coverId, Integer page) {
         if (page <= 1) {
             page = 1;

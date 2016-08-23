@@ -22,4 +22,7 @@ public interface CoverDao extends JpaRepository<CoverEntity, Long> {
 
     @Query(value = "select * from cover where id = :id and weight >= 0", nativeQuery = true)
     CoverEntity getCoverById(@Param("id") Long id);
+
+    @Query(value = "select * from cover where weight >= 0 order by update_time DESC limit 15", nativeQuery = true)
+    List<CoverEntity> getCoverLatest();
 }

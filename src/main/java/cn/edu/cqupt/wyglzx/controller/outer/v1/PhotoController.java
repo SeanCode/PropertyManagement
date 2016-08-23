@@ -29,6 +29,12 @@ public class PhotoController {
         return new DataResponse().put("photo_list", photoService.getLatestPhotos());
     }
 
+    @RequestMapping("/covers/")
+    @JsonView(OutputEntityJsonView.Detail.class)
+    public DataResponse getCoverLatest() {
+        return new DataResponse().put("cover_list", photoService.getLatestCovers());
+    }
+
     @RequestMapping("/{type}")
     @JsonView(OutputEntityJsonView.Detail.class)
     public DataResponse getCoverList(@PathVariable(value = "type") Integer type, @RequestParam(name = "page", required = false, defaultValue = "1") Integer page) {

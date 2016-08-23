@@ -1,6 +1,7 @@
 package cn.edu.cqupt.wyglzx.entity;
 
 import cn.edu.cqupt.wyglzx.common.OutputEntityJsonView;
+import cn.edu.cqupt.wyglzx.common.Util;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 
@@ -22,6 +23,8 @@ public class PhotoEntity {
     private int    weight     = 0;
     private long   createTime = 0;
     private long   updateTime = 0;
+    private String create_time_formatted = "";
+    private String update_time_formatted = "";
 
     private CoverEntity cover;
 
@@ -111,9 +114,9 @@ public class PhotoEntity {
     }
 
     @Basic
-    @Column(name = "create_time", nullable = false)
     @JsonProperty("create_time")
-    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    @JsonView({OutputEntityJsonView.Detail.class})
+    @Column(name = "create_time", nullable = false)
     public long getCreateTime() {
         return createTime;
     }
@@ -122,16 +125,42 @@ public class PhotoEntity {
         this.createTime = createTime;
     }
 
+    @Transient
+    @JsonProperty("create_time_formatted")
+    @JsonView({OutputEntityJsonView.Detail.class})
+    public String getCreate_time_formatted() {
+
+        create_time_formatted = Util.getTimeString(this.createTime);
+        return create_time_formatted;
+    }
+
+    public void setCreate_time_formatted(String create_time_formatted) {
+        this.create_time_formatted = create_time_formatted;
+    }
+
     @Basic
-    @Column(name = "update_time", nullable = false)
     @JsonProperty("update_time")
-    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    @JsonView({OutputEntityJsonView.Detail.class})
+    @Column(name = "update_time", nullable = false)
     public long getUpdateTime() {
         return updateTime;
     }
 
     public void setUpdateTime(long updateTime) {
         this.updateTime = updateTime;
+    }
+
+    @Transient
+    @JsonProperty("update_time_formatted")
+    @JsonView({OutputEntityJsonView.Detail.class})
+    public String getUpdate_time_formatted() {
+        update_time_formatted = Util.getTimeString(this.updateTime);
+
+        return update_time_formatted;
+    }
+
+    public void setUpdate_time_formatted(String update_time_formatted) {
+        this.update_time_formatted = update_time_formatted;
     }
 
     @Transient
