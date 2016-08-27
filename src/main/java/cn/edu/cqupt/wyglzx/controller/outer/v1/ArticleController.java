@@ -22,10 +22,10 @@ public class ArticleController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/")
     @JsonView(OutputEntityJsonView.Basic.class)
-    public DataResponse getArticleList() {
+    public DataResponse getArticleList(@RequestParam(value = "page", required = false, defaultValue = "1")Integer page) {
 
         DataResponse response = new DataResponse();
-        response.put("article_list", articleService.getLatest());
+        response.put("article_list", articleService.getLatest(page));
         return response;
     }
 
@@ -34,7 +34,7 @@ public class ArticleController {
     public DataResponse getArticleList(@PathVariable("type") Integer type, @RequestParam(value = "page", required = false, defaultValue = "0") Integer page) {
 
         DataResponse response = new DataResponse();
-        response.put("article_list", articleService.getArticleList(type, page));
+        response.put("article_list", articleService.getArticleListByType(type, page));
         response.put("count", articleService.getListAmountByType(type));
         return response;
     }

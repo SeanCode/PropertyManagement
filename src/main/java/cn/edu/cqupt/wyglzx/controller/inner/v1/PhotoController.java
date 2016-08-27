@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
  * Created by cc on 16/7/31.
  */
 @RestController("Private.PhotoController")
-@RequestMapping("/api/private/v1/img")
+@RequestMapping("/api/private/v1/photo")
 @Component
 public class PhotoController {
+
 }

@@ -12,12 +12,12 @@ import javax.persistence.*;
 @Entity
 @Table(name = "attachment", schema = "sdq", catalog = "")
 public class AttachmentEntity {
-    private long   id;
-    private String name;
-    private String url;
-    private int    weight;
-    private long   createTime;
-    private long   updateTime;
+    private long id;
+    private String name       = "";
+    private String url        = "";
+    private int    weight     = 0;
+    private long   createTime = 0;
+    private long   updateTime = 0;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

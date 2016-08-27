@@ -25,6 +25,9 @@ public class AdminService {
     @Autowired
     AdminDao adminDao;
 
+    @Autowired
+    AuthenticationFacadeService authService;
+
     public AdminEntity login(String name, String password) throws InvalidKeySpecException, NoSuchAlgorithmException {
         AdminEntity admin = adminDao.existByName(name);
         if (admin == null || !PasswordHash.validatePassword(password, admin.getPassword())) {
@@ -34,6 +37,10 @@ public class AdminService {
     }
 
     public AdminEntity addAdmin(String name, String username, Integer privilege) throws InvalidKeySpecException, NoSuchAlgorithmException {
+        if (!authService.getAuthentication().hasAuthorizedAdmin()) {
+            throw new NotAllowedException("您当前未被授权此操作!请联系管理员授权");
+        }
+
         AdminEntity admin = adminDao.existByName(name);
         if (admin != null) {
             throw new ExistsException();
@@ -55,7 +62,9 @@ public class AdminService {
     }
 
     public AdminEntity updateAdminByRoot(String name, String newUserName, String newName, int newPrivilege) throws InvalidKeySpecException, NoSuchAlgorithmException {
-
+        if (!authService.getAuthentication().hasAuthorizedAdmin()) {
+            throw new NotAllowedException("您当前未被授权此操作!请联系管理员授权");
+        }
         AdminEntity admin = adminDao.existByName(name);
         if (admin == null) {
             throw new NotExistsException();
@@ -119,7 +128,9 @@ public class AdminService {
     }
 
     public AdminEntity resetPassword(Long id) throws InvalidKeySpecException, NoSuchAlgorithmException {
-
+        if (!authService.getAuthentication().hasAuthorizedAdmin()) {
+            throw new NotAllowedException("您当前未被授权此操作!请联系管理员授权");
+        }
         AdminEntity admin = adminDao.existsById(id);
         if (admin == null) {
             throw new NotExistsException();
@@ -136,7 +147,9 @@ public class AdminService {
     }
 
     public void updateAdminStatus(Long id, Integer status) {
-
+        if (!authService.getAuthentication().hasAuthorizedAdmin()) {
+            throw new NotAllowedException("您当前未被授权此操作!请联系管理员授权");
+        }
         AdminEntity admin = adminDao.existsById(id);
         if (admin == null) {
             throw new NotExistsException();
@@ -148,10 +161,15 @@ public class AdminService {
     }
 
     public void deleteAdmin(Long id) {
-
+        if (!authService.getAuthentication().hasAuthorizedAdmin()) {
+            throw new NotAllowedException("您当前未被授权此操作!请联系管理员授权");
+        }
         AdminEntity admin = adminDao.existsById(id);
         if (admin == null) {
             throw new NotExistsException();
+        }
+        if (admin.getStatus() == AdminEntity.STATUS_PROTECTED || admin.getId() == authService.getAuthentication().getId()) {
+            throw new NotAllowedException("非法操作");
         }
         admin.setWeight(-1);
         admin.setUpdateTime(Util.time());
@@ -168,7 +186,9 @@ public class AdminService {
     }
 
     public void updateAdminPrivilege(Long id, Integer index) {
-
+        if (!authService.getAuthentication().hasAuthorizedAdmin()) {
+            throw new NotAllowedException("您当前未被授权此操作!请联系管理员授权");
+        }
         AdminEntity admin = adminDao.existsById(id);
         if (admin == null) {
             throw new NotExistsException();

@@ -64,6 +64,13 @@ public class Util {
         return "|" + Joiner.on("|").skipNulls().join(list) + "|";
     }
 
+    public static String implode(List<String> list, String glue) {
+        if (list == null ||list.size() <= 0) {
+            return "";
+        }
+        return Joiner.on(glue).skipNulls().join(list);
+    }
+
     public static Map<String, Integer> convertDecToIntValueByKeys(Long dec, List<String> keys) {
         Map<String, Integer> map = new HashMap<String, Integer>();
         int length = keys.size();
@@ -86,6 +93,14 @@ public class Util {
                 .omitEmptyStrings()
                 .split(idString));
         return "|" + Joiner.on("|").join(idStringSet) + "|";
+    }
+
+    public static String filter(String s, String glue) {
+        HashSet<String> set = Sets.newHashSet(Splitter.on(glue)
+                .trimResults()
+                .omitEmptyStrings()
+                .split(s));
+        return Joiner.on(glue).skipNulls().join(set);
     }
 
     public static String stickIdToIdString(String idString, Long id) {

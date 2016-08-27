@@ -52,6 +52,7 @@ public class ArticleEntity {
 
     private AdminEntity            admin;
     private String                 createTimeFormated;
+    private String                 updateTimeFormated;
     private List<AttachmentEntity> attachmentList;
     private List<String>           imgList;
 
@@ -224,6 +225,19 @@ public class ArticleEntity {
 
     public void setCreateTimeFormated(String createTimeFormated) {
         this.createTimeFormated = createTimeFormated;
+    }
+
+    @Transient
+    @JsonProperty("update_time_formated")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    public String getUpdateTimeFormated() {
+
+        updateTimeFormated = Util.getTimeString(getUpdateTime());
+        return updateTimeFormated;
+    }
+
+    public void setUpdateTimeFormated(String updateTimeFormated) {
+        this.updateTimeFormated = updateTimeFormated;
     }
 
     @Transient
