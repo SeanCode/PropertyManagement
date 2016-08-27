@@ -25,7 +25,7 @@ public class PhotoService {
         if (page < 1) {
             page = 1;
         }
-        return coverDao.getCoverListByType(type, (page - 1) * 10);
+        return coverDao.getCoverListByType(type, (page - 1) * 4);
     }
 
     public Integer getCoverAmount(Integer type) {
@@ -49,7 +49,12 @@ public class PhotoService {
         if (page <= 1) {
             page = 1;
         }
-        return photoDao.getPhotoListByCover(coverId, (page - 1) * 10);
+        return photoDao.getPhotoListByCover(coverId, (page - 1) * 9);
+    }
+
+    public CoverEntity getCover(Long coverId) {
+
+        return coverDao.getCoverById(coverId);
     }
 
     public Integer getPhotoAmount(Long coverId) {

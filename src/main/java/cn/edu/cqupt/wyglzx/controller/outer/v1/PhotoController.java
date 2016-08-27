@@ -50,6 +50,7 @@ public class PhotoController {
     public DataResponse getPhotoList(@PathVariable("type") Integer type, @PathVariable("cover_id") Long coverId, @RequestParam(name = "page", required = false, defaultValue = "1") Integer page) {
 
         DataResponse response = new DataResponse();
+        response.put("cover", photoService.getCover(coverId));
         response.put("photo_list", photoService.getPhotos(coverId, page));
         response.put("count", photoService.getPhotoAmount(coverId));
         return response;
