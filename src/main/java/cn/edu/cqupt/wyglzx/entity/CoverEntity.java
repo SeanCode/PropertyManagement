@@ -33,8 +33,8 @@ public class CoverEntity {
     private long   updateTime            = 0;
     private String create_time_formatted = "";
     private String update_time_formatted = "";
-    private int read;
-    private AdminEntity            admin;
+    private int    read                  = 0;
+    private AdminEntity admin;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -144,7 +144,7 @@ public class CoverEntity {
     @Basic
     @JsonProperty("read")
     @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
-    @Column(name = "read", nullable = false)
+    @Column(name = "[read]", nullable = false)
     public int getRead() {
         return read;
     }

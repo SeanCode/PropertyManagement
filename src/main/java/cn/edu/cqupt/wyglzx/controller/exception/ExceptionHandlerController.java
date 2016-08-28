@@ -27,7 +27,7 @@ public class ExceptionHandlerController {
         }
 
         if (e != null) {
-            String message = ExceptionUtils.getStackTrace(e);
+            String message = ExceptionUtils.getMessage(e);
             errorResponse.setMessage(message);
 
             if (e instanceof MissingServletRequestParameterException) {

@@ -53,6 +53,7 @@ public class ArticleEntity {
     private AdminEntity            admin;
     private String                 createTimeFormated;
     private String                 updateTimeFormated;
+    private String                 typeName;
     private List<AttachmentEntity> attachmentList;
     private List<String>           imgList;
 
@@ -104,6 +105,52 @@ public class ArticleEntity {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    @Transient
+    @JsonProperty("type_name")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    public String getTypeName() {
+        switch (type) {
+            case 10001:
+                typeName = "政策法规";
+                break;
+            case 10002:
+                typeName = "工作简报";
+                break;
+            case 10003:
+                typeName = "流程指南";
+                break;
+            case 10004:
+                typeName = "相关下载";
+                break;
+            case 20001:
+                typeName = "新闻热点";
+                break;
+            case 20002:
+                typeName = "公示公告";
+                break;
+            case 30001:
+                typeName = "特种设备";
+                break;
+            case 30002:
+                typeName = "教学巡查";
+                break;
+            case 40003:
+                typeName = "公寓巡查";
+                break;
+            case 30004:
+                typeName = "物业巡查";
+                break;
+            default:
+                typeName = "";
+                break;
+        }
+        return typeName;
+    }
+
+    public void setTypeName(String typeName) {
+        this.typeName = typeName;
     }
 
     @Basic

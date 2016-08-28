@@ -31,6 +31,9 @@ public class ArticleService {
     AuthenticationFacadeService authenticationFacadeService;
 
     public List<ArticleEntity> getLatest(Integer page) {
+        if (page < 1) {
+            page = 1;
+        }
         return articleDao.getAllTypeArticles((page - 1) * 10);
     }
 

@@ -40,7 +40,7 @@ public class PhotoController {
     public DataResponse getCoverList(@PathVariable(value = "type") Integer type, @RequestParam(name = "page", required = false, defaultValue = "1") Integer page) {
 
         DataResponse response = new DataResponse();
-        response.put("cover_list", photoService.getCoverList(type, page));
+        response.put("cover_list", photoService.getCoverList(type, page, 4));
         response.put("count", photoService.getCoverAmount(type));
         return response;
     }
