@@ -7,7 +7,9 @@ import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Created by cc on 16/7/31.
@@ -33,6 +35,16 @@ public class UploadController {
     public DataResponse uploadFile() {
 
         return new DataResponse();
+    }
+
+    @RequestMapping("/img")
+    @JsonView(OutputEntityJsonView.Detail.class)
+    public DataResponse uploadPhoto(@RequestParam("file") MultipartFile file) {
+
+        DataResponse response = new DataResponse();
+        response.put("img", uploadService.uploadPhoto(file));
+        return response;
+
     }
 
 }

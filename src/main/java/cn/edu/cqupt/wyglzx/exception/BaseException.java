@@ -13,6 +13,7 @@ public class BaseException extends RuntimeException {
     public static final int WRONG_PASSWORD = 5;
     public static final int INVALID_PARAMS = 6;
     public static final int NOT_ALLOWED = 7;
+    public static final int UPLOAD_FAILED = 8;
 
     private int code;
     private String message;
