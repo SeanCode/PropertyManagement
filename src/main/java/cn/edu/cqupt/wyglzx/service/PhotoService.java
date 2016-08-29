@@ -6,6 +6,7 @@ import cn.edu.cqupt.wyglzx.dao.PhotoDao;
 import cn.edu.cqupt.wyglzx.entity.CoverEntity;
 import cn.edu.cqupt.wyglzx.entity.PhotoEntity;
 import cn.edu.cqupt.wyglzx.exception.NotExistsException;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,9 @@ public class PhotoService {
 
     @Autowired
     PhotoDao photoDao;
+
+    @Autowired
+    AuthenticationFacadeService authenticationFacadeService;
 
     public List<CoverEntity> getCoverList(Integer type, Integer page, Integer limit) {
         if (page < 1) {
@@ -95,6 +99,46 @@ public class PhotoService {
         coverEntity.setWeight(-1);
         coverEntity.setUpdateTime(Util.time());
         coverDao.save(coverEntity);
+    }
+
+    public void addPhoto(Long coverId, String url) {
+        PhotoEntity photoEntity = new PhotoEntity();
+        photoEntity.setUrl(url);
+        photoEntity.setCoverId(coverId);
+        photoEntity.setCreateTime(Util.time());
+        photoEntity.setUpdateTime(photoEntity.getCreateTime());
+        photoDao.save(photoEntity);
+    }
+
+    public void addCover(String name, String url, Integer type) {
+        CoverEntity coverEntity = new CoverEntity();
+        coverEntity.setAdminId(authenticationFacadeService.getAuthentication().getId());
+        coverEntity.setName(name);
+        coverEntity.setCoverUrl(url);
+        coverEntity.setType(type);
+        coverEntity.setCreateTime(Util.time());
+        coverEntity.setUpdateTime(coverEntity.getCreateTime());
+        coverDao.save(coverEntity);
+    }
+
+    public void updateCover(Long id, String name, String url) {
+        CoverEntity coverEntity = coverDao.getCoverById(id);
+        if (coverEntity == null) {
+            throw new NotExistsException();
+        }
+        boolean flag = false;
+        if (StringUtils.isNotBlank(name)) {
+            coverEntity.setName(name);
+            flag = true;
+        }
+        if (StringUtils.isNotBlank(url)) {
+            coverEntity.setCoverUrl(url);
+            flag = true;
+        }
+        if (flag) {
+            coverEntity.setUpdateTime(Util.time());
+            coverDao.save(coverEntity);
+        }
     }
 
 }

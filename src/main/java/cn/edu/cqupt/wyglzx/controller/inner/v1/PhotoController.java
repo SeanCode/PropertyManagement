@@ -35,13 +35,14 @@ public class PhotoController {
 
         DataResponse response = new DataResponse();
         response.put("photo_list", photoService.getPhotos(coverId, page));
+        response.put("cover", photoService.getCover(coverId));
         response.put("count", photoService.getPhotoAmount(coverId));
         return response;
     }
 
     @RequestMapping("/photo-delete")
     @JsonView(OutputEntityJsonView.Detail.class)
-    public DataResponse deletePhoto(@RequestParam("id")Long id) {
+    public DataResponse deletePhoto(@RequestParam("id") Long id) {
 
         photoService.deletePhoto(id);
         return new DataResponse();
@@ -49,9 +50,33 @@ public class PhotoController {
 
     @RequestMapping("/cover-delete")
     @JsonView(OutputEntityJsonView.Detail.class)
-    public DataResponse deleteCover(@RequestParam("id")Long id) {
+    public DataResponse deleteCover(@RequestParam("id") Long id) {
 
         photoService.deleteCover(id);
+        return new DataResponse();
+    }
+
+    @RequestMapping("/photo-add")
+    @JsonView(OutputEntityJsonView.Detail.class)
+    public DataResponse addPhoto(@RequestParam("cover_id") Long coverId, @RequestParam("url") String url) {
+
+        photoService.addPhoto(coverId, url);
+        return new DataResponse();
+    }
+
+    @RequestMapping("/cover-add")
+    @JsonView(OutputEntityJsonView.Detail.class)
+    public DataResponse addCover(@RequestParam("name") String name, @RequestParam("url") String url, @RequestParam("type") Integer type) {
+
+        photoService.addCover(name, url, type);
+        return new DataResponse();
+    }
+
+    @RequestMapping("/cover-update")
+    @JsonView(OutputEntityJsonView.Detail.class)
+    public DataResponse updateCover(@RequestParam("id")Long id, @RequestParam(value = "name", required = false, defaultValue = "")String name, @RequestParam(value = "url", required = false, defaultValue = "") String url) {
+
+        photoService.updateCover(id, name, url);
         return new DataResponse();
     }
 
