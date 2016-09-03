@@ -49,5 +49,26 @@ public class ConfigController {
         return new DataResponse().put("config", configService.savePrice(year, month, water, ele, gas));
     }
 
+    @RequestMapping("/banner-list")
+    @JsonView(OutputEntityJsonView.Detail.class)
+    public DataResponse getBannerList() {
+
+        return new DataResponse().put("banner_list", configService.getBannerList());
+    }
+
+    @RequestMapping("/banner-update")
+    @JsonView(OutputEntityJsonView.Detail.class)
+    public DataResponse updateBanner(@RequestParam("id") Long id, @RequestParam("url") String url) {
+
+        return new DataResponse().put("banner_list", configService.updateBanner(id, url));
+    }
+
+    @RequestMapping("/banner-add")
+    @JsonView(OutputEntityJsonView.Detail.class)
+    public DataResponse addBanner(@RequestParam("url")String url) {
+
+
+        return new DataResponse().put("banner", configService.addBanner(url));
+    }
 
 }

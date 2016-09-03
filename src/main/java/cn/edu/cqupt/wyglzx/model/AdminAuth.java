@@ -30,7 +30,7 @@ public class AdminAuth {
     @Transient
     private boolean picture;
     @Transient
-    private boolean resource;
+    private boolean suggestion;
     @Transient
     private boolean banner;
 
@@ -132,18 +132,18 @@ public class AdminAuth {
     }
 
     @JsonView({OutputEntityJsonView.Detail.class})
-    @JsonProperty("resource")
-    public boolean isResource() {
+    @JsonProperty("suggestion")
+    public boolean isSuggestion() {
         return (privilege & 512) == 512;
     }
 
-    public void setResource(boolean resource) {
-        this.resource = resource;
+    public void setSuggestion(boolean suggestion) {
+        this.suggestion = suggestion;
     }
 
     @JsonView({OutputEntityJsonView.Detail.class})
     @JsonProperty("banner")
-    public boolean banner() {
+    public boolean isBanner() {
         return (privilege & 1024) == 1024;
     }
 

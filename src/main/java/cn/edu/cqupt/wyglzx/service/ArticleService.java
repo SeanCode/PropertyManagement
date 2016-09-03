@@ -88,7 +88,7 @@ public class ArticleService {
     @Transactional
     public ArticleEntity saveArticle(String title, Integer type, String content, String imgs, String attachments) {
 
-        if (authenticationFacadeService.getAuthentication().hasAuthorizedArticle()) {
+        if (!authenticationFacadeService.getAuthentication().hasAuthorizedArticle()) {
             throw new NotAllowedException("尚未授权!请联系管理员!");
         }
         if (type == 0) {
@@ -117,7 +117,7 @@ public class ArticleService {
 
     public ArticleEntity updateArticle(Long id, String title, String content, String attachments, String imgs) {
 
-        if (authenticationFacadeService.getAuthentication().hasAuthorizedArticle()) {
+        if (!authenticationFacadeService.getAuthentication().hasAuthorizedArticle()) {
             throw new NotAllowedException("尚未授权!请联系管理员!");
         }
         ArticleEntity articleEntity = articleDao.getArticleById(id);

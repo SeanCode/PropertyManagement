@@ -6,11 +6,14 @@ import cn.edu.cqupt.wyglzx.dao.PriceDao;
 import cn.edu.cqupt.wyglzx.entity.ConfigEntity;
 import cn.edu.cqupt.wyglzx.entity.PriceEntity;
 import cn.edu.cqupt.wyglzx.exception.InvalidParamsException;
+import cn.edu.cqupt.wyglzx.exception.NotAllowedException;
 import cn.edu.cqupt.wyglzx.exception.NotExistsException;
 import cn.edu.cqupt.wyglzx.model.PriceConfig;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * Created by cc on 16/6/25.
@@ -21,7 +24,7 @@ public class ConfigService {
     @Autowired
     ConfigDao configDao;
     @Autowired
-    PriceDao priceDao;
+    PriceDao  priceDao;
 
     public PriceConfig getPriceByYearAndMonth(Integer year, Integer month) {
         PriceConfig priceConfig = null;
@@ -123,6 +126,35 @@ public class ConfigService {
         } else {
             throw new InvalidParamsException();
         }
+    }
+
+    public List<ConfigEntity> getBannerList() {
+
+        return configDao.getBannerList();
+    }
+
+    public List<ConfigEntity> updateBanner(Long id, String url) {
+        ConfigEntity configEntity = configDao.getBannerById(id);
+        if (configEntity == null) {
+            throw new NotExistsException("不存在的banner");
+        }
+        configEntity.setData(url);
+        configEntity.setUpdateTime(Util.time());
+        configDao.save(configEntity);
+
+        return configDao.getBannerList();
+    }
+
+    public ConfigEntity addBanner(String url) {
+        if (configDao.getBannerList().size() > 4) {
+            throw new NotAllowedException();
+        }
+        ConfigEntity configEntity = new ConfigEntity();
+        configEntity.setData(url);
+        configEntity.setType(ConfigEntity.TYPE_BANNER);
+        configEntity.setCreateTime(Util.time());
+        configEntity.setUpdateTime(configEntity.getCreateTime());
+        return configDao.save(configEntity);
     }
 
 }

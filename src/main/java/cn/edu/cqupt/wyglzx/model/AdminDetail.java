@@ -56,12 +56,12 @@ public class AdminDetail extends User {
         return adminEntity.getAdminAuth().isPicture();
     }
 
-    public boolean hasAuthorizedResource() {
-        return adminEntity.getAdminAuth().isResource();
+    public boolean hasAuthorizedSuggestion() {
+        return adminEntity.getAdminAuth().isSuggestion();
     }
 
     public boolean hasAuthorizedBanner() {
-        return adminEntity.getAdminAuth().banner();
+        return adminEntity.getAdminAuth().isBanner();
     }
 
     public Long getId() {

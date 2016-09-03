@@ -14,13 +14,14 @@ import javax.persistence.*;
 public class ConfigEntity {
 
     private long id;
-    private String data = "";
-    private int type = 0;
-    private long createTime = 0L;
-    private long updateTime = 0L;
+    private String data       = "";
+    private int    type       = 0;
+    private long   createTime = 0L;
+    private long   updateTime = 0L;
 
     public final static int TYPE_DEFAULT_PRICE = 10000;
     public final static int TYPE_SPECIAL_PRICE = 10001;
+    public final static int TYPE_BANNER        = 20000;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -114,8 +115,8 @@ public class ConfigEntity {
         @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
         public double water = 0.00;
         @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
-        public double ele = 0.00;
+        public double ele   = 0.00;
         @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
-        public double gas = 0.00;
+        public double gas   = 0.00;
     }
 }
