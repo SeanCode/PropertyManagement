@@ -24,9 +24,10 @@ public class UploadController {
 
     @RequestMapping("/attachment")
     @JsonView(OutputEntityJsonView.Basic.class)
-    public DataResponse uploadAttachment() {
+    public DataResponse uploadAttachment(@RequestParam("file") MultipartFile file) {
 
         DataResponse response = new DataResponse();
+        response.put("attachment", uploadService.uploadAttachment(file));
         return response;
     }
 

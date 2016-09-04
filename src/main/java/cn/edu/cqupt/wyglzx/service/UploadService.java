@@ -30,17 +30,6 @@ public class UploadService {
     @Autowired
     PhotoDao photoDao;
 
-    public AttachmentEntity saveAttchment(String name, String url) {
-
-        AttachmentEntity attachmentEntity = new AttachmentEntity();
-        attachmentEntity.setName(name);
-        attachmentEntity.setUrl(url);
-        attachmentEntity.setCreateTime(Util.time());
-        attachmentEntity.setUpdateTime(attachmentEntity.getCreateTime());
-
-        return attachmentDao.save(attachmentEntity);
-    }
-
     public String uploadPhoto(MultipartFile file) {
         if (!file.isEmpty()) {
             try {
@@ -54,11 +43,43 @@ public class UploadService {
 
                 return imgName;
             } catch (IOException | RuntimeException e) {
-                throw new UploadFailedException();
+                throw new UploadFailedException(e.getMessage());
             }
         } else {
             throw new UploadFailedException("上传文件为空");
         }
+    }
+
+    public AttachmentEntity uploadAttachment(MultipartFile file) {
+        if (!file.isEmpty()) {
+            try {
+                //以时间戳命名图片
+                String name = file.getOriginalFilename();
+                int position = name.lastIndexOf(".");
+                String prefix = name.substring(0, position > 0 ? position : name.length());
+                String suffix = name.substring(position > 0 ? position : 0, name.length());
+                String attachmentName = prefix + Util.time() + suffix;
+                Path path = Paths.get(Config.getAttachmentPath(), attachmentName);
+                Files.copy(file.getInputStream(), path);
+
+                return saveAttachment(name, "file/" + attachmentName);
+
+            } catch (IOException | RuntimeException e) {
+                throw new UploadFailedException(e.getMessage());
+            }
+        } else {
+            throw new UploadFailedException("上传文件为空");
+        }
+    }
+
+    private AttachmentEntity saveAttachment(String name, String url) {
+        AttachmentEntity attachmentEntity = new AttachmentEntity();
+        attachmentEntity.setName(name);
+        attachmentEntity.setUrl(url);
+        attachmentEntity.setCreateTime(Util.time());
+        attachmentEntity.setUpdateTime(attachmentEntity.getCreateTime());
+
+        return attachmentDao.save(attachmentEntity);
     }
 
 }
