@@ -26,6 +26,9 @@ public class ConfigService {
     @Autowired
     PriceDao  priceDao;
 
+    @Autowired
+    AuthenticationFacadeService authenticationFacadeService;
+
     public PriceConfig getPriceByYearAndMonth(Integer year, Integer month) {
         PriceConfig priceConfig = null;
         //return specified price
@@ -134,6 +137,9 @@ public class ConfigService {
     }
 
     public List<ConfigEntity> updateBanner(Long id, String url) {
+        if (!authenticationFacadeService.getAuthentication().hasAuthorizedBanner()) {
+            throw new NotAllowedException("尚未授权!请联系管理员!");
+        }
         ConfigEntity configEntity = configDao.getBannerById(id);
         if (configEntity == null) {
             throw new NotExistsException("不存在的banner");
@@ -146,6 +152,9 @@ public class ConfigService {
     }
 
     public ConfigEntity addBanner(String url) {
+        if (!authenticationFacadeService.getAuthentication().hasAuthorizedBanner()) {
+            throw new NotAllowedException("尚未授权!请联系管理员!");
+        }
         if (configDao.getBannerList().size() > 4) {
             throw new NotAllowedException();
         }

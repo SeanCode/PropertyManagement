@@ -5,6 +5,7 @@ import cn.edu.cqupt.wyglzx.dao.CoverDao;
 import cn.edu.cqupt.wyglzx.dao.PhotoDao;
 import cn.edu.cqupt.wyglzx.entity.CoverEntity;
 import cn.edu.cqupt.wyglzx.entity.PhotoEntity;
+import cn.edu.cqupt.wyglzx.exception.NotAllowedException;
 import cn.edu.cqupt.wyglzx.exception.NotExistsException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,6 +81,9 @@ public class PhotoService {
     }
 
     public void deletePhoto(Long photoId) {
+        if (!authenticationFacadeService.getAuthentication().hasAuthorizedPicture()) {
+            throw new NotAllowedException("尚未授权!请联系管理员!");
+        }
         PhotoEntity photoEntity = photoDao.getPhotoById(photoId);
         if (photoEntity == null) {
             throw new NotExistsException();
@@ -91,6 +95,9 @@ public class PhotoService {
 
     @Transactional
     public void deleteCover(Long coverId) {
+        if (!authenticationFacadeService.getAuthentication().hasAuthorizedPicture()) {
+            throw new NotAllowedException("尚未授权!请联系管理员!");
+        }
         CoverEntity coverEntity = coverDao.getCoverById(coverId);
         if (coverEntity == null) {
             throw new NotExistsException();
@@ -102,6 +109,9 @@ public class PhotoService {
     }
 
     public void addPhoto(Long coverId, String url) {
+        if (!authenticationFacadeService.getAuthentication().hasAuthorizedPicture()) {
+            throw new NotAllowedException("尚未授权!请联系管理员!");
+        }
         PhotoEntity photoEntity = new PhotoEntity();
         photoEntity.setUrl(url);
         photoEntity.setCoverId(coverId);
@@ -111,6 +121,9 @@ public class PhotoService {
     }
 
     public void addCover(String name, String url, Integer type) {
+        if (!authenticationFacadeService.getAuthentication().hasAuthorizedPicture()) {
+            throw new NotAllowedException("尚未授权!请联系管理员!");
+        }
         CoverEntity coverEntity = new CoverEntity();
         coverEntity.setAdminId(authenticationFacadeService.getAuthentication().getId());
         coverEntity.setName(name);
@@ -122,6 +135,9 @@ public class PhotoService {
     }
 
     public void updateCover(Long id, String name, String url) {
+        if (!authenticationFacadeService.getAuthentication().hasAuthorizedPicture()) {
+            throw new NotAllowedException("尚未授权!请联系管理员!");
+        }
         CoverEntity coverEntity = coverDao.getCoverById(id);
         if (coverEntity == null) {
             throw new NotExistsException();
