@@ -27,11 +27,11 @@ public class SuggestionController {
 
     @RequestMapping("/list")
     @JsonView(OutputEntityJsonView.Detail.class)
-    public DataResponse getSuggestionList(@RequestParam(value = "page", defaultValue = "1", required = false) Integer page) {
+    public DataResponse getSuggestionList(@RequestParam(value = "type", required = false, defaultValue = "0") int type, @RequestParam(value = "page", defaultValue = "1", required = false) Integer page) {
 
         DataResponse response = new DataResponse();
-        response.put("suggestion_list", suggestionService.getSuggestionList(page, 3));
-        response.put("count", suggestionService.getCount());
+        response.put("suggestion_list", suggestionService.getSuggestionList(type, page, 3));
+        response.put("count", suggestionService.getCount(type));
         return response;
     }
 

@@ -8,6 +8,7 @@ import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
 import javax.persistence.*;
+import java.text.SimpleDateFormat;
 
 /**
  * Created by cc on 16/9/5.
@@ -224,7 +225,7 @@ public class SuggestionEntity {
     @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public String getCreateTimeFormatted() {
 
-        createTimeFormatted = Util.getTimeString(getCreateTime());
+        createTimeFormatted = Util.getTimeString(new SimpleDateFormat("MM/dd"), getCreateTime());
         return createTimeFormatted;
     }
 
@@ -237,7 +238,7 @@ public class SuggestionEntity {
     @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public String getUpdateTimeFormatted() {
 
-        updateTimeFormatted = Util.getTimeString(getUpdateTime());
+        updateTimeFormatted = Util.getTimeString(new SimpleDateFormat("MM/dd"), getUpdateTime());
         return updateTimeFormatted;
     }
 

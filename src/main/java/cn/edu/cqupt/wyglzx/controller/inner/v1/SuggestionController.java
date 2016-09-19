@@ -23,11 +23,21 @@ public class SuggestionController {
 
     @RequestMapping("/list")
     @JsonView(OutputEntityJsonView.Detail.class)
-    public DataResponse getSuggestionList(@RequestParam(value = "page", defaultValue = "1", required = false) Integer page) {
+    public DataResponse getSuggestionList(@RequestParam(value = "type", required = false, defaultValue = "0") int type, @RequestParam(value = "page", defaultValue = "1", required = false) Integer page) {
 
         DataResponse response = new DataResponse();
-        response.put("suggestion_list", suggestionService.getSuggestionList(page, 10));
-        response.put("count", suggestionService.getCount());
+        response.put("suggestion_list", suggestionService.getSuggestionList(type, page, 10));
+        response.put("count", suggestionService.getCount(type));
+        return response;
+    }
+
+    @RequestMapping("/list-by-status")
+    @JsonView(OutputEntityJsonView.Detail.class)
+    public DataResponse getSuggestionListByStatus(@RequestParam(value = "page", defaultValue = "1", required = false) Integer page, @RequestParam("status") Integer status) {
+
+        DataResponse response = new DataResponse();
+        response.put("suggestion_list", suggestionService.getSuggestionListByStatus(status, page));
+        response.put("count", suggestionService.getCountByStatus(status));
         return response;
     }
 

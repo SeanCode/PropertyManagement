@@ -26,15 +26,33 @@ public class SuggestionService {
     @Autowired
     AuthenticationFacadeService authenticationFacadeService;
 
-    public List<SuggestionEntity> getSuggestionList(int page, int limit) {
+    public List<SuggestionEntity> getSuggestionList(int type, int page, int limit) {
         if (page < 1) {
             page = 1;
         }
-        return suggestionDao.getSuggestionList((page - 1) * limit, limit);
+        if (type == 0) {
+            return suggestionDao.getSuggestionList((page - 1) * limit, limit);
+        }
+        return suggestionDao.getSuggestionListByType(type, (page - 1) * limit, limit);
     }
 
-    public Integer getCount() {
-        return suggestionDao.getCount();
+    public List<SuggestionEntity> getSuggestionListByStatus(int status, int page) {
+        if (page < 1) {
+            page = 1;
+        }
+        return suggestionDao.getSuggestionListByStatus(status, (page - 1) * 10);
+    }
+
+    public Integer getCount(int type) {
+        if (type == 0) {
+            return suggestionDao.getCount();
+        } else {
+            return suggestionDao.getCountByType(type);
+        }
+    }
+
+    public Integer getCountByStatus(int status) {
+        return suggestionDao.getCountByStatus(status);
     }
 
     public SuggestionEntity addSuggestion(String content, int type, String userName, String userAccount, String ip) {
