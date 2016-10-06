@@ -14,6 +14,7 @@ public class BaseException extends RuntimeException {
     public static final int INVALID_PARAMS = 6;
     public static final int NOT_ALLOWED = 7;
     public static final int UPLOAD_FAILED = 8;
+    public static final int METER_INPUT_WARNING = 9;
 
     private int code;
     private String message;

@@ -23,4 +23,7 @@ public interface InstitutionDao extends JpaRepository<InstitutionEntity, Long> {
 
     List<InstitutionEntity> findByWeight(Integer weight);
 
+    @Query(value = "select count(*) from institution where weight >= 0", nativeQuery = true)
+    Integer getInstitutionCount();
+
 }

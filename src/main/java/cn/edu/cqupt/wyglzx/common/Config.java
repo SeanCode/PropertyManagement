@@ -6,6 +6,8 @@ public class Config {
 
     public static final boolean IS_DEBUG = true;
 
+    public static final int RECORD_WARNING_VALUE = 100;
+
     public static final String DEBUG_DB_USER = "root";
 
     public static final String IMG_PATH_DEBUG = "/users/cc/Dev/web/Sites/static/res/img";

@@ -21,6 +21,12 @@ public class MeterController {
     @Autowired
     MeterService meterService;
 
+    @RequestMapping("/list")
+    @JsonView(OutputEntityJsonView.Detail.class)
+    public DataResponse getNodeMeterList(@RequestParam("node_id") Long nodeId) {
+        return new DataResponse().put("meter_list", meterService.getMeterList(nodeId));
+    }
+
     @RequestMapping("/normal-list")
     @JsonView(OutputEntityJsonView.Detail.class)
     public DataResponse getNodeNormalMeterList(@RequestParam("node_id") Long nodeId) {

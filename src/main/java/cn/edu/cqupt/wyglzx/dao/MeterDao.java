@@ -32,4 +32,7 @@ public interface MeterDao extends JpaRepository<MeterEntity, Long> {
     @Query(value = "SELECT * FROM meter as t1, meter as t2 WHERE t1.weight >=0  and t1.type < 4 and t1.status >= 0 and t2.type < 4 and t1.parent_id = t2.id and t2.node_id = :node_id and t2.weight >= 0 and t2.status >= 0", nativeQuery = true)
     List<MeterEntity> getMeterChildrenByNodeId(@Param("node_id") Long nodeId);
 
+    @Query(value = "SELECT * FROM meter where node_id = :node_id and weight >= 0 and status >= 0", nativeQuery = true)
+    List<MeterEntity> getMeterListByNodeId(@Param("node_id") Long nodeId);
+
 }

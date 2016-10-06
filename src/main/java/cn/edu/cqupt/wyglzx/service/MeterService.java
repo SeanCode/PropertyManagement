@@ -311,4 +311,15 @@ public class MeterService {
         oldMeter.setUpdateTime(Util.time());
         meterDao.save(oldMeter);
     }
+
+    public List<MeterEntity> getMeterList(Long nodeId) {
+
+        List<MeterEntity> list = meterDao.getMeterListByNodeId(nodeId);
+
+        for (MeterEntity meter : list) {
+            meter.setParent(meterDao.getMeterById(meter.getParentId()));
+        }
+
+        return list;
+    }
 }

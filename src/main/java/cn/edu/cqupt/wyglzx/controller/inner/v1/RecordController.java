@@ -26,32 +26,11 @@ public class RecordController {
     public DataResponse inputRecord(@RequestParam("meter_id") Long meterId,
                                     @RequestParam("time") Long time,
                                     @RequestParam("value") Double value,
-                                    @RequestParam(value = "reader", defaultValue = "") String reader,
+                                    @RequestParam(value = "force", required = false, defaultValue = "false") Boolean force,
+                                    @RequestParam(value = "reader", required = false, defaultValue = "") String reader,
                                     @RequestParam(value = "remark", required = false, defaultValue = "") String remark) {
 
-        recordService.input(meterId, time, value, reader, remark);
-        return new DataResponse();
-    }
-
-    @RequestMapping("/update")
-    @JsonView(OutputEntityJsonView.Basic.class)
-    public DataResponse updateRecord(@RequestParam("id") Long id,
-                                     @RequestParam(value = "end", required = false, defaultValue = "0") Double end,
-                                     @RequestParam(value = "reader", required = false, defaultValue = "") String reader,
-                                     @RequestParam(value = "remark", required = false, defaultValue = "") String remark) {
-
-        recordService.updateRecord(id, end, reader, remark);
-        return new DataResponse();
-    }
-
-
-    @RequestMapping("/temp-list-by-node")
-    @JsonView(OutputEntityJsonView.Basic.class)
-    public DataResponse getListByNode(@RequestParam("node_id") Long nodeId,
-                                      @RequestParam("year") Integer year,
-                                      @RequestParam("month") Integer month) {
-
-        return new DataResponse().put("record_list", recordService.getTempListByNodeAndTime(nodeId, year, month));
+        return new DataResponse().put("meter_list", recordService.inputMeter(meterId, time, value, reader, remark, force));
     }
 
     @RequestMapping("/list-pending")
@@ -82,6 +61,28 @@ public class RecordController {
                                            @RequestParam("status") Integer status) {
         recordService.checkRecord(id, status);
         return new DataResponse();
+    }
+
+    // ---------------- 暂时不需要的api -------------------------
+
+    @RequestMapping("/update")
+    @JsonView(OutputEntityJsonView.Basic.class)
+    public DataResponse updateRecord(@RequestParam("id") Long id,
+                                     @RequestParam(value = "end", required = false, defaultValue = "0") Double end,
+                                     @RequestParam(value = "reader", required = false, defaultValue = "") String reader,
+                                     @RequestParam(value = "remark", required = false, defaultValue = "") String remark) {
+
+        recordService.updateRecord(id, end, reader, remark);
+        return new DataResponse();
+    }
+
+    @RequestMapping("/temp-list-by-node")
+    @JsonView(OutputEntityJsonView.Basic.class)
+    public DataResponse getListByNode(@RequestParam("node_id") Long nodeId,
+                                      @RequestParam("year") Integer year,
+                                      @RequestParam("month") Integer month) {
+
+        return new DataResponse().put("record_list", recordService.getTempListByNodeAndTime(nodeId, year, month));
     }
 
     @RequestMapping("/last")

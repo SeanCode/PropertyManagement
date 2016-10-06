@@ -1,13 +1,12 @@
 package cn.edu.cqupt.wyglzx.service;
 
+import cn.edu.cqupt.wyglzx.common.Config;
 import cn.edu.cqupt.wyglzx.common.Util;
+import cn.edu.cqupt.wyglzx.dao.MeterDao;
 import cn.edu.cqupt.wyglzx.dao.RecordDao;
 import cn.edu.cqupt.wyglzx.entity.MeterEntity;
 import cn.edu.cqupt.wyglzx.entity.RecordEntity;
-import cn.edu.cqupt.wyglzx.exception.ExistsException;
-import cn.edu.cqupt.wyglzx.exception.InvalidParamsException;
-import cn.edu.cqupt.wyglzx.exception.NotAllowedException;
-import cn.edu.cqupt.wyglzx.exception.NotExistsException;
+import cn.edu.cqupt.wyglzx.exception.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,10 +18,14 @@ import java.util.*;
  * Created by cc on 16/6/25.
  */
 @Component
+@Transactional
 public class RecordService {
 
     @Autowired
     RecordDao recordDao;
+
+    @Autowired
+    MeterDao meterDao;
 
     @Autowired
     MeterService meterService;
@@ -37,13 +40,58 @@ public class RecordService {
         }
     }
 
-    // TODO 初始化tag
-    public void input(Long meterId, Long time, Double value, String reader, String remark) {
-        if (value == null || value < 0) {
-            throw new InvalidParamsException("value");
+    // 录入前的风险控制, 与去年同月的用量做比较,误差超过一定范围, 严格模式下则抛异常警告
+    public int preInput(Long meterId, Long time, Double value, boolean strict) {
+        int tag = RecordEntity.TAG_INIT;
+        // 1.对比去年同月的用量, 目前阈值是给定的, 以后做成动态的
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+        calendar.setTime(new Date(time * 1000));
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH) + 1;
+        RecordEntity lastYear = recordDao.getMeterYearMonthRecord(meterId, year - 1, month);
+        if (lastYear != null) {
+            // 超过阈值 则
+            if (value - lastYear.getEnd() >= Config.RECORD_WARNING_VALUE) {
+                tag = RecordEntity.TAG_WARNING;
+                if (strict) {
+                    throw new MeterInputException("系统录入警告, 请再次检查确认无误后提交");
+                }
+            }
         }
-        checkNotExistsByMeterIdAndTime(meterId, time);
-        MeterEntity meterEntity = meterService.checkMeterById(meterId);
+        // 2.上一个月的用量对比
+        RecordEntity lastMonth = recordDao.getMeterYearMonthRecord(meterId, year, month - 1);
+        if (lastMonth != null && tag == RecordEntity.TAG_INIT) {
+            if (value - lastMonth.getEnd() < 0) {
+                tag = RecordEntity.TAG_ERROR;
+                if (strict) {
+                    throw new MeterInputException("系统录入错误, 请再次检查确认无误后提交");
+                }
+            } else if (value - lastMonth.getEnd() > Config.RECORD_WARNING_VALUE) {
+                // 超过了阈值
+                tag = RecordEntity.TAG_WARNING;
+                if (strict) {
+                    throw new MeterInputException("系统录入警告, 请再次检查确认无误后提交");
+                }
+            }
+        }
+        // 3.直接比较阈值
+        if (tag == RecordEntity.TAG_INIT) {
+            if (value >= Config.RECORD_WARNING_VALUE) {
+                tag = RecordEntity.TAG_WARNING;
+                if (strict) {
+                    throw new MeterInputException("系统录入警告, 请再次检查确认无误后提交");
+                }
+            } else {
+                tag = RecordEntity.TAG_NORMAL;
+            }
+        }
+        return tag;
+    }
+
+    // 经过风险控制过后的真正的录入
+    public void input(MeterEntity meterEntity, Long time, Double value, String reader, String remark, int tag) {
+
         RecordEntity recordEntity = new RecordEntity();
         Calendar calendar = new GregorianCalendar();
         calendar.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
@@ -58,8 +106,11 @@ public class RecordService {
         recordEntity.setMonth(calendar.get(Calendar.MONTH) + 1);
         recordEntity.setEnd(value);
         recordEntity.setTime(time);
+        recordEntity.setTag(tag);
         if (StringUtils.isNotBlank(reader)) {
             recordEntity.setReader(reader);
+        } else {
+            recordEntity.setReader(authService.getAuthentication().getUsername());
         }
         if (StringUtils.isNotBlank(remark)) {
             recordEntity.setRemark(remark);
@@ -68,6 +119,29 @@ public class RecordService {
         recordEntity.setUpdateTime(recordEntity.getCreateTime());
 
         recordDao.save(recordEntity);
+
+        // 更新表的上次录入时间和状态, 审核通过后,再更新一次录入状态和当前值
+        meterEntity.setLastInputTime(Util.time());
+        meterEntity.setLastInputStatus(MeterEntity.INPUT_STATUS_PENDING);
+        meterDao.save(meterEntity);
+    }
+
+    // 录入入口
+    public List<MeterEntity> inputMeter(Long meterId, Long time, Double value, String reader, String remark, boolean force) {
+        // 数据校验
+        if (value == null || value <= 0) {
+            throw new InvalidParamsException("value");
+        }
+        checkNotExistsByMeterIdAndTime(meterId, time);
+        // 风险控制 强制提交则不走严格模式
+        int tag = preInput(meterId, time, value, !force);
+
+        MeterEntity meterEntity = meterService.checkMeterById(meterId);
+
+        // 录入
+        input(meterEntity, time, value, reader, remark, tag);
+
+        return meterService.getMeterList(meterEntity.getNodeId());
     }
 
     public List<RecordEntity> getTempListByNodeAndTime(Long nodeId, Integer year, Integer month) {
@@ -134,6 +208,7 @@ public class RecordService {
         return recordDao.getCheckedListByAdmin(authService.getAuthentication().getId(), page * 10);
     }
 
+    // TODO 批量审核 + 更新表的上次录入状态和当前值
     @Transactional
     public void checkRecord(Long id, Integer status) {
         RecordEntity recordEntity = recordDao.getRecordById(id);

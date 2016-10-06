@@ -1,6 +1,7 @@
 package cn.edu.cqupt.wyglzx.service;
 
 import cn.edu.cqupt.wyglzx.common.Util;
+import cn.edu.cqupt.wyglzx.dao.InstitutionDao;
 import cn.edu.cqupt.wyglzx.dao.UserDao;
 import cn.edu.cqupt.wyglzx.entity.UserEntity;
 import cn.edu.cqupt.wyglzx.exception.ExistsException;
@@ -19,6 +20,9 @@ public class UserService {
 
     @Autowired
     UserDao userDao;
+
+    @Autowired
+    InstitutionDao institutionDao;
 
     public UserEntity checkById(Long id) {
         UserEntity userEntity = userDao.getUserById(id);
@@ -106,6 +110,7 @@ public class UserService {
     }
 
     public Integer getUserAmount() {
-        return userDao.getUserAmount();
+
+        return institutionDao.getInstitutionCount() + userDao.getUserAmount();
     }
 }

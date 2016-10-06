@@ -23,6 +23,7 @@ public class MeterEntity {
     private double begin = 0.00;
     private double current = 0.00;
     private long lastInputTime = 0;
+    private int lastInputStatus = INPUT_STATUS_UNKNOWN;
     private String nameplate = "";
     private String manufacturers = "";
     private String purchaser = "";
@@ -45,7 +46,13 @@ public class MeterEntity {
     public static final int STATUS_VALID = 0;
     public static final int STATUS_INVALID = -1;
 
+    public static final int INPUT_STATUS_UNKNOWN = 0;
+    public static final int INPUT_STATUS_PENDING = 1;
+    public static final int INPUT_STATUS_ACCEPT = 2;
+    public static final int INPUT_STATUS_REJECTED = -1;
+
     private String typeName;
+    private String lastInputStatusName;
 
     private MeterEntity parent;
 
@@ -225,6 +232,46 @@ public class MeterEntity {
 
     public void setLastInputTime(long lastInputTime) {
         this.lastInputTime = lastInputTime;
+    }
+
+    @Transient
+    @JsonProperty("last_input_status_name")
+    @JsonView({OutputEntityJsonView.Tree.class, OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    public String getLastInputStatusName() {
+        switch (lastInputStatus) {
+            case INPUT_STATUS_ACCEPT:
+                lastInputStatusName = "通过";
+                break;
+            case INPUT_STATUS_REJECTED:
+                lastInputStatusName = "未通过";
+                break;
+            case INPUT_STATUS_UNKNOWN:
+                lastInputStatusName = "未知";
+                break;
+            case INPUT_STATUS_PENDING:
+                lastInputStatusName = "待审核";
+                break;
+            default:
+                lastInputStatusName = "其他";
+                break;
+        }
+        return lastInputStatusName;
+    }
+
+    public void setLastInputStatusName(String lastInputStatusName) {
+        this.lastInputStatusName = lastInputStatusName;
+    }
+
+    @Basic
+    @Column(name = "last_input_status", nullable = false)
+    @JsonProperty("last_input_status")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    public int getLastInputStatus() {
+        return lastInputStatus;
+    }
+
+    public void setLastInputStatus(int lastInputStatus) {
+        this.lastInputStatus = lastInputStatus;
     }
 
     @Basic
