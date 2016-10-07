@@ -105,7 +105,7 @@ public class RecordService {
         recordEntity.setMeterType(meterEntity.getType());
         recordEntity.setNodeId(meterEntity.getNodeId());
         recordEntity.setType(RecordEntity.TYPE_TEMP);
-        recordEntity.setBegin(meterEntity.getBegin());
+        recordEntity.setBegin(meterEntity.getCurrent());
         recordEntity.setOperatorId(authService.getAuthentication().getId());
         recordEntity.setYear(calendar.get(Calendar.YEAR));
         recordEntity.setMonth(calendar.get(Calendar.MONTH) + 1);

@@ -4,6 +4,7 @@ import cn.edu.cqupt.wyglzx.entity.RecordEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
@@ -48,8 +49,12 @@ public interface RecordDao extends JpaRepository<RecordEntity, Long> {
     // 这个sql 在jpa里面是只能拿到一条数据 所以还是用下面的比较好
     @Deprecated
     @Query(value = "select * from record where id in (:id_list) and type = 2 and status = 0 and weight >= 0", nativeQuery = true)
-    List<RecordEntity> getTempRecordListById(@Param("id_list")String idList);
+    List<RecordEntity> getTempRecordListById(@Param("id_list") String idList);
 
     List<RecordEntity> findByIdIn(Collection<Long> id);
+
+    @Query(value = "select * from record where node_id = :node_id and type = 1 and year = :year and meter_type = :meter_type and weight >= 0", nativeQuery = true)
+    List<RecordEntity> getNodeArchiveListByYearAngType(@Param("node_id") Long nodeId, @Param("year") int year, @Param("meter_type")int type);
+
 
 }
