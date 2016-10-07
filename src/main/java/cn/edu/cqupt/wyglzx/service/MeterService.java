@@ -5,6 +5,7 @@ import cn.edu.cqupt.wyglzx.dao.MeterDao;
 import cn.edu.cqupt.wyglzx.entity.MeterEntity;
 import cn.edu.cqupt.wyglzx.exception.ExistsException;
 import cn.edu.cqupt.wyglzx.exception.InvalidParamsException;
+import cn.edu.cqupt.wyglzx.exception.NotAllowedException;
 import cn.edu.cqupt.wyglzx.exception.NotExistsException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -260,7 +261,10 @@ public class MeterService {
     public void replaceMeter(Long id, Double end, String name, String code, Integer rate, Double begin, String nameplate, String manufacturers, String purchaser, Double cost, Long buyTime, Long productTime, String remark) {
         MeterEntity oldMeter = checkMeterById(id);
         if (oldMeter.getCurrent() != end) {
-            throw new InvalidParamsException("旧表止度尚未录入");
+            throw new NotAllowedException("旧表止度尚未成功录入, 请先录入");
+        }
+        if (oldMeter.getLastInputStatus() == MeterEntity.INPUT_STATUS_PENDING) {
+            throw new NotAllowedException("旧表录入数据正在审核中, 请先等待通过审核");
         }
         MeterEntity meterEntity = new MeterEntity();
         meterEntity.setParentId(oldMeter.getParentId());

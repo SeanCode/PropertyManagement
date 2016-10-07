@@ -8,11 +8,14 @@ import cn.edu.cqupt.wyglzx.entity.MeterEntity;
 import cn.edu.cqupt.wyglzx.entity.RecordEntity;
 import cn.edu.cqupt.wyglzx.exception.*;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Created by cc on 16/6/25.
@@ -33,10 +36,12 @@ public class RecordService {
     @Autowired
     AuthenticationFacadeService authService;
 
+    private static Logger logger = org.slf4j.LoggerFactory.getLogger(RecordService.class);
+
     public void checkNotExistsByMeterIdAndTime(Long meterId, Long time) {
         RecordEntity recordEntity = recordDao.getByMeterIdAndTime(meterId, time);
         if (recordEntity != null) {
-            throw new ExistsException("当前时间数据已被录入");
+            throw new ExistsException("当前时间数据已被录入, 请留意抄表时间");
         }
     }
 
@@ -51,8 +56,8 @@ public class RecordService {
         int month = calendar.get(Calendar.MONTH) + 1;
         RecordEntity lastYear = recordDao.getMeterYearMonthRecord(meterId, year - 1, month);
         if (lastYear != null) {
-            // 超过阈值 则
-            if (value - lastYear.getEnd() >= Config.RECORD_WARNING_VALUE) {
+            // 2倍则警告
+            if (value >= 2 * lastYear.getEnd()) {
                 tag = RecordEntity.TAG_WARNING;
                 if (strict) {
                     throw new MeterInputException("系统录入警告, 请再次检查确认无误后提交");
@@ -67,8 +72,8 @@ public class RecordService {
                 if (strict) {
                     throw new MeterInputException("系统录入错误, 请再次检查确认无误后提交");
                 }
-            } else if (value - lastMonth.getEnd() > Config.RECORD_WARNING_VALUE) {
-                // 超过了阈值
+            } else if (value >= 2 * lastMonth.getEnd()) {
+                // 超过2倍
                 tag = RecordEntity.TAG_WARNING;
                 if (strict) {
                     throw new MeterInputException("系统录入警告, 请再次检查确认无误后提交");
@@ -110,7 +115,7 @@ public class RecordService {
         if (StringUtils.isNotBlank(reader)) {
             recordEntity.setReader(reader);
         } else {
-            recordEntity.setReader(authService.getAuthentication().getUsername());
+            recordEntity.setReader(authService.getAuthentication().getAdmin().getUsername());
         }
         if (StringUtils.isNotBlank(remark)) {
             recordEntity.setRemark(remark);
@@ -190,8 +195,10 @@ public class RecordService {
     }
 
     public List<RecordEntity> getPendingList(Integer page) {
-
-        return recordDao.getPendingList(page * 10);
+        if (page < 1) {
+            page = 1;
+        }
+        return recordDao.getPendingList((page - 1) * 10);
     }
 
     /**
@@ -208,42 +215,79 @@ public class RecordService {
         return recordDao.getCheckedListByAdmin(authService.getAuthentication().getId(), page * 10);
     }
 
-    // TODO 批量审核 + 更新表的上次录入状态和当前值
+    /**
+     * 1. 使用id字符串 更新临时录入record 数据status
+     * 2. 从record中拿到meter_id 去更新meter表的last_input_status
+     * 3. 生成或更新存档record
+     */
     @Transactional
-    public void checkRecord(Long id, Integer status) {
-        RecordEntity recordEntity = recordDao.getRecordById(id);
-        if (recordEntity == null) {
-            throw new NotExistsException();
+    public void checkRecord(String id, Integer status) {
+        if (status != RecordEntity.STATUS_REJECTED && status != RecordEntity.STATUS_APPROVED) {
+            throw new InvalidParamsException("status");
         }
-        if (recordEntity.getType() != RecordEntity.TYPE_TEMP || recordEntity.getStatus() != 0) {
-            throw new NotAllowedException();
+        List<String> ids = Util.explodeIdString(id);
+        List<Long> idList = ids.stream().map((Function<String, Long>) Long::parseLong).collect(Collectors.toList());
+        List<RecordEntity> list = recordDao.findByIdIn(idList);
+        if (list.size() <= 0) {
+            return;
         }
-        Long adminId = authService.getAuthentication().getId();
-        recordEntity.setReviewerId(adminId);
-        recordEntity.setStatus(status < 0 ? RecordEntity.STATUS_REJECTED : RecordEntity.STATUS_APPROVED);
 
-        RecordEntity archived = recordDao.getArchivedRecord(recordEntity.getMeterId(), recordEntity.getYear(), recordEntity.getMonth());
+        for (RecordEntity record : list) {
+            if (record.getWeight() < 0 || record.getType() != RecordEntity.TYPE_TEMP || record.getStatus() != RecordEntity.STATUS_PENDING) {
+                continue;
+            }
+            // 先更新临时记录
+            Long adminId = authService.getAuthentication().getId();
+            record.setReviewerId(adminId);
+            record.setStatus(status);
+            record.setUpdateTime(Util.time());
+            // 再更新或生成存档记录,用于统计
+            archiveRecord(record);
+            // 更新 表的last_input_status和current
+            updateMeterLastInputStatus(record);
+            // save 临时记录
+            recordDao.save(record);
+        }
+    }
+
+    private void archiveRecord(RecordEntity record) {
+
+        RecordEntity archived = recordDao.getArchivedRecord(record.getMeterId(), record.getYear(), record.getMonth());
         boolean flag = false;
         if (archived == null) {
             archived = new RecordEntity();
             archived.setType(RecordEntity.TYPE_ARCHIVE);
-            archived.setOperatorId(adminId);
-            archived.setNodeId(recordEntity.getNodeId());
-            archived.setMeterId(recordEntity.getMeterId());
-            archived.setMeterType(recordEntity.getMeterType());
+            archived.setOperatorId(record.getReviewerId()); // 记录操作人的id
+            archived.setNodeId(record.getNodeId());
+            archived.setMeterId(record.getMeterId());
+            archived.setMeterType(record.getMeterType());
             archived.setCreateTime(Util.time());
-            archived.setYear(recordEntity.getYear());
-            archived.setMonth(recordEntity.getMonth());
-            archived.setBegin(recordEntity.getBegin());
+            archived.setYear(record.getYear());
+            archived.setMonth(record.getMonth());
+            archived.setBegin(record.getBegin());
             archived.setTime(Util.time());
             flag = true;
         }
-        archived.setEnd(recordEntity.getEnd());
-        archived.setReviewerId(adminId);
+        archived.setEnd(record.getEnd());
+        archived.setReviewerId(record.getReviewerId()); // 记录审核人的id
         archived.setUpdateTime(flag ? archived.getCreateTime() : Util.time());
 
         recordDao.save(archived);
-        recordDao.save(recordEntity);
+    }
+
+    private void updateMeterLastInputStatus(RecordEntity record) {
+        MeterEntity meter = meterDao.getMeterById(record.getMeterId());
+        if (meter.getStatus() == MeterEntity.STATUS_VALID && meter.getWeight() >= 0) {
+            meter.setUpdateTime(Util.time());
+//          如果通过审核, 则更新当前度数
+            if (record.getStatus() == RecordEntity.STATUS_APPROVED) {
+                meter.setCurrent(record.getEnd());
+                meter.setLastInputStatus(MeterEntity.INPUT_STATUS_ACCEPT);
+            } else if (record.getStatus() == RecordEntity.STATUS_REJECTED) {
+                meter.setLastInputStatus(MeterEntity.INPUT_STATUS_REJECTED);
+            }
+            meterDao.save(meter);
+        }
     }
 
     public Integer getPendingCount() {

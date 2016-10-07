@@ -7,6 +7,7 @@ import com.google.common.collect.Sets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.function.Consumer;
 
 public class Util {
 
@@ -57,7 +58,7 @@ public class Util {
         return new String(id);
     }
 
-    public static String implodeIdString(List<String> list) {
+    public static String implodeNodeIdString(List<String> list) {
         if (list == null || list.size() == 0) {
             return "|1|";
         }
@@ -87,7 +88,7 @@ public class Util {
         return map;
     }
 
-    public static String filterIdString(String idString) {
+    public static String filterNodeIdString(String idString) {
         HashSet<String> idStringSet = Sets.newHashSet(Splitter.on('|')
                 .trimResults()
                 .omitEmptyStrings()
@@ -103,7 +104,7 @@ public class Util {
         return Joiner.on(glue).skipNulls().join(set);
     }
 
-    public static String stickIdToIdString(String idString, Long id) {
+    public static String stickIdToNodeIdString(String idString, Long id) {
         HashSet<String> idStringSet = Sets.newHashSet(Splitter.on('|')
                 .trimResults()
                 .omitEmptyStrings()
@@ -112,7 +113,7 @@ public class Util {
         return "|" + Joiner.on("|").join(idStringSet) + "|";
     }
 
-    public static List<String> explodeIdString(String idString) {
+    public static List<String> explodeNodeIdString(String idString) {
         HashSet<String> idStringSet = Sets.newHashSet(Splitter.on('|')
                 .trimResults()
                 .omitEmptyStrings()
@@ -130,20 +131,29 @@ public class Util {
         return new ArrayList<>(idStringSet);
     }
 
+    public static List<String> explodeIdString(String idString) {
+        HashSet<String> idStringSet = Sets.newHashSet(Splitter.on(',')
+                .trimResults()
+                .omitEmptyStrings()
+                .split(idString));
+
+        return new ArrayList<>(idStringSet);
+    }
+
 //    public static void main(String[] args) {
 //        System.out.println(time());
-//        String s = stickIdToIdString("|1|2|3|1|", 4L);
+//        String s = stickIdToNodeIdString("|1|2|3|1|", 4L);
 //        System.out.println(time());
 //        System.out.println(s);
 //
-//        System.out.println(explodeIdString("|1|2|3|4|").toString());
+//        System.out.println(explodeNodeIdString("|1|2|3|4|").toString());
 //
 //        List<String> idList = new ArrayList<>();
 //        idList.add(1 + "");
 //        idList.add(2 + "");
 //        idList.add(3 + "");
 //
-//        System.out.println(implodeIdString(idList));
+//        System.out.println(implodeNodeIdString(idList));
 //    }
 //
 //    public static void main(String[] args) {

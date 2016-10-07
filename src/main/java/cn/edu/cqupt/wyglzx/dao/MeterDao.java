@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -34,5 +35,7 @@ public interface MeterDao extends JpaRepository<MeterEntity, Long> {
 
     @Query(value = "SELECT * FROM meter where node_id = :node_id and weight >= 0 and status >= 0", nativeQuery = true)
     List<MeterEntity> getMeterListByNodeId(@Param("node_id") Long nodeId);
+
+    List<MeterEntity> findByIdIn(Collection<Long> id);
 
 }

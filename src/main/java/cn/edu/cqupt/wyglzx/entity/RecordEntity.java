@@ -408,10 +408,7 @@ public class RecordEntity {
         if (createTime != that.createTime) return false;
         if (updateTime != that.updateTime) return false;
         if (reader != null ? !reader.equals(that.reader) : that.reader != null) return false;
-        if (remark != null ? !remark.equals(that.remark) : that.remark != null) return false;
-        if (node != null ? !node.equals(that.node) : that.node != null) return false;
-        if (meter != null ? !meter.equals(that.meter) : that.meter != null) return false;
-        return operator != null ? operator.equals(that.operator) : that.operator == null;
+        return remark != null ? remark.equals(that.remark) : that.remark == null;
 
     }
 
@@ -424,7 +421,7 @@ public class RecordEntity {
         result = 31 * result + meterType;
         result = 31 * result + (int) (nodeId ^ (nodeId >>> 32));
         result = 31 * result + year;
-        result = 31 * result + (int) (month ^ (month >>> 32));
+        result = 31 * result + month;
         temp = Double.doubleToLongBits(end);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         temp = Double.doubleToLongBits(begin);
@@ -440,9 +437,6 @@ public class RecordEntity {
         result = 31 * result + weight;
         result = 31 * result + (int) (createTime ^ (createTime >>> 32));
         result = 31 * result + (int) (updateTime ^ (updateTime >>> 32));
-        result = 31 * result + (node != null ? node.hashCode() : 0);
-        result = 31 * result + (meter != null ? meter.hashCode() : 0);
-        result = 31 * result + (operator != null ? operator.hashCode() : 0);
         return result;
     }
 }

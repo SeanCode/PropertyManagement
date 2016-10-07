@@ -249,7 +249,7 @@ public class MeterEntity {
                 lastInputStatusName = "未知";
                 break;
             case INPUT_STATUS_PENDING:
-                lastInputStatusName = "待审核";
+                lastInputStatusName = "审核中";
                 break;
             default:
                 lastInputStatusName = "其他";

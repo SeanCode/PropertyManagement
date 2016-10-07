@@ -3,7 +3,6 @@ package cn.edu.cqupt.wyglzx.service;
 import cn.edu.cqupt.wyglzx.common.Util;
 import cn.edu.cqupt.wyglzx.dao.NodeDao;
 import cn.edu.cqupt.wyglzx.entity.NodeEntity;
-import cn.edu.cqupt.wyglzx.entity.NodeOwnerEntity;
 import cn.edu.cqupt.wyglzx.exception.InvalidParamsException;
 import cn.edu.cqupt.wyglzx.exception.NotExistsException;
 import org.apache.commons.lang3.StringUtils;
@@ -136,7 +135,7 @@ public class NodeService {
 
         NodeEntity node = checkNodeById(id);
 
-        node.setParentId(Util.stickIdToIdString(node.getParentId(), parentId));
+        node.setParentId(Util.stickIdToNodeIdString(node.getParentId(), parentId));
 
         node = nodeDao.save(node);
         return node;
@@ -144,7 +143,7 @@ public class NodeService {
 
     public void removeNode(Long parentId, Long id) {
         NodeEntity node = checkNodeById(id);
-        List<String> parentIdList = Util.explodeIdString(node.getParentId());
+        List<String> parentIdList = Util.explodeNodeIdString(node.getParentId());
         if (!parentIdList.contains(parentId + "")) {
             throw new NotExistsException();
         }
@@ -154,7 +153,7 @@ public class NodeService {
                 newIdList.add(pId);
             }
         }
-        node.setParentId(Util.implodeIdString(newIdList));
+        node.setParentId(Util.implodeNodeIdString(newIdList));
 
         nodeDao.save(node);
     }

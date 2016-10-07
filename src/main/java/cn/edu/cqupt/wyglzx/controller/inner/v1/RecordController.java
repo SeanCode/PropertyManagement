@@ -35,9 +35,12 @@ public class RecordController {
 
     @RequestMapping("/list-pending")
     @JsonView(OutputEntityJsonView.Detail.class)
-    public DataResponse getListPending(@RequestParam(value = "page", required = false, defaultValue = "0") Integer page) {
+    public DataResponse getListPending(@RequestParam(value = "page", required = false, defaultValue = "1") Integer page) {
 
-        return new DataResponse().put("pending_list", recordService.getPendingList(page));
+        DataResponse response = new DataResponse();
+        response.put("pending_list", recordService.getPendingList(page));
+        response.put("pending_count", recordService.getPendingCount());
+        return response;
     }
 
     @RequestMapping("/pending-count")
@@ -57,7 +60,7 @@ public class RecordController {
 
     @RequestMapping("/check")
     @JsonView(OutputEntityJsonView.Basic.class)
-    public DataResponse updateRecordStatus(@RequestParam("id") Long id,
+    public DataResponse updateRecordStatus(@RequestParam("id") String id,
                                            @RequestParam("status") Integer status) {
         recordService.checkRecord(id, status);
         return new DataResponse();
