@@ -59,12 +59,15 @@ public class ArticleService {
         if (type == 0) {
             return articleDao.getListAmountByType();
         }
+        if (type % 10000 == 0) {
+            return articleDao.getListAmountByCount1AndCount2(type, type + 10000);
+        }
         return articleDao.getListAmountByType(type);
     }
 
     public ArticleEntity getArticleContent(Integer type, Long id) {
 
-        ArticleEntity articleEntity = articleDao.getArticleByIdAndType(id, type);
+        ArticleEntity articleEntity = type != 0 ? articleDao.getArticleByIdAndType(id, type) : articleDao.getArticleById(id);
         if (articleEntity == null) {
             throw new NotExistsException();
         }
@@ -76,13 +79,17 @@ public class ArticleService {
     }
 
     public ArticleEntity getArticlePrevious(Long createTime, Integer type) {
-
-        return articleDao.getArticlePrevious(createTime, type);
+        if (type == 0) {
+            return articleDao.getArticlePreviousByTime(createTime);
+        }
+        return articleDao.getArticlePreviousByTimeAndType(createTime, type);
     }
 
     public ArticleEntity getArticleNext(Long createTime, Integer type) {
-
-        return articleDao.getArticleNext(createTime, type);
+        if (type == 0) {
+            return articleDao.getArticleNextByTime(createTime);
+        }
+        return articleDao.getArticleNextByTimeAndType(createTime, type);
     }
 
     @Transactional

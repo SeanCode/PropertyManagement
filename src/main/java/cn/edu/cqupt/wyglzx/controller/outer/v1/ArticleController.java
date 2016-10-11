@@ -26,6 +26,7 @@ public class ArticleController {
 
         DataResponse response = new DataResponse();
         response.put("article_list", articleService.getLatest(page));
+        response.put("count", articleService.getListAmountByType(0));
         return response;
     }
 
@@ -46,8 +47,8 @@ public class ArticleController {
         DataResponse response = new DataResponse();
         ArticleEntity article = articleService.getArticleContent(type, id);
         response.put("article_content", article);
-        response.put("article_previous", articleService.getArticlePrevious(article.getCreateTime(), article.getType()));
-        response.put("article_next", articleService.getArticleNext(article.getCreateTime(), article.getType()));
+        response.put("article_previous", articleService.getArticlePrevious(article.getCreateTime(), type));
+        response.put("article_next", articleService.getArticleNext(article.getCreateTime(), type));
         return response;
     }
 

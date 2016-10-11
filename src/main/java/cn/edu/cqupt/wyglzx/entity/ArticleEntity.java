@@ -32,9 +32,10 @@ public class ArticleEntity {
     //安检日志
     public static final int TYPE_LOG            = 30000;
     public static final int TYPE_LOG_DEVICE     = 30001;//特种设备
-    public static final int TYPE_LOG_TEACHING   = 30002;//教学巡查
-    public static final int TYPE_LOG_DEPARTMENT = 30003;//公寓巡查
-    public static final int TYPE_LOG_PROPERTY   = 30004;//物业巡查
+    public static final int TYPE_LOG_FIRE_SAFE  = 30002;//消防安全
+    public static final int TYPE_LOG_TEACHING   = 30003;//教学巡查
+    public static final int TYPE_LOG_DEPARTMENT = 30004;//公寓巡查
+    public static final int TYPE_LOG_PROPERTY   = 30005;//物业巡查
 
     private long id;
     private long   adminId     = 0;
@@ -112,34 +113,37 @@ public class ArticleEntity {
     @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public String getTypeName() {
         switch (type) {
-            case 10001:
+            case TYPE_GUIDE_RULE:
                 typeName = "政策法规";
                 break;
-            case 10002:
+            case TYPE_GUIDE_WORK:
                 typeName = "工作简报";
                 break;
-            case 10003:
+            case TYPE_GUIDE_PROCESS:
                 typeName = "流程指南";
                 break;
-            case 10004:
+            case TYPE_GUIDE_DOWNLOAD:
                 typeName = "相关下载";
                 break;
-            case 20001:
+            case TYPE_NEWS_HOT:
                 typeName = "新闻热点";
                 break;
-            case 20002:
+            case TYPE_NEWS_POST:
                 typeName = "公示公告";
                 break;
-            case 30001:
+            case TYPE_LOG_DEVICE:
                 typeName = "特种设备";
                 break;
-            case 30002:
+            case TYPE_LOG_FIRE_SAFE:
+                typeName = "消防安全";
+                break;
+            case TYPE_LOG_TEACHING:
                 typeName = "教学巡查";
                 break;
-            case 40003:
+            case TYPE_LOG_DEPARTMENT:
                 typeName = "公寓巡查";
                 break;
-            case 30004:
+            case TYPE_LOG_PROPERTY:
                 typeName = "物业巡查";
                 break;
             default:

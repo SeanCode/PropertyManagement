@@ -39,6 +39,9 @@ public interface ArticleDao extends JpaRepository<ArticleEntity, Long> {
     @Query(value = "select count(*) from article where weight >= 0", nativeQuery = true)
     Integer getListAmountByType();
 
+    @Query(value = "select count(*) from article where weight >= 0 and type between :c1 and :c2", nativeQuery = true)
+    Integer getListAmountByCount1AndCount2(@Param("c1") int count1, @Param("c2") int count2);
+
     @Query(value = "select * from article where id = :id and type = :type and weight >= 0", nativeQuery = true)
     ArticleEntity getArticleByIdAndType(@Param("id") Long id, @Param("type") Integer type);
 
@@ -46,9 +49,15 @@ public interface ArticleDao extends JpaRepository<ArticleEntity, Long> {
     ArticleEntity getArticleById(@Param("id") Long id);
 
     @Query(value = "select * from article where create_time < :create_time and type = :type and weight >= 0 order by create_time DESC, id DESC limit 1", nativeQuery = true)
-    ArticleEntity getArticlePrevious(@Param("create_time") Long createTime, @Param("type") Integer type);
+    ArticleEntity getArticlePreviousByTimeAndType(@Param("create_time") Long createTime, @Param("type") Integer type);
+
+    @Query(value = "select * from article where create_time < :create_time and weight >= 0 order by create_time DESC, id DESC limit 1", nativeQuery = true)
+    ArticleEntity getArticlePreviousByTime(@Param("create_time") Long createTime);
 
     @Query(value = "select * from article where create_time > :create_time  and type = :type and weight >= 0 order by create_time ASC, id ASC limit 1", nativeQuery = true)
-    ArticleEntity getArticleNext(@Param("create_time") Long createTime, @Param("type") Integer type);
+    ArticleEntity getArticleNextByTimeAndType(@Param("create_time") Long createTime, @Param("type") Integer type);
+
+    @Query(value = "select * from article where create_time > :create_time  and weight >= 0 order by create_time ASC, id ASC limit 1", nativeQuery = true)
+    ArticleEntity getArticleNextByTime(@Param("create_time") Long createTime);
 
 }
