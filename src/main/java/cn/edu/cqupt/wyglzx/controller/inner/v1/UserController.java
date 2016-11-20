@@ -47,6 +47,21 @@ public class UserController {
         return new DataResponse().put("user", userService.updateUserInfo(id, name, username, phone, idCard, schoolCard, remark));
     }
 
+    @RequestMapping("set-department")
+    @JsonView(OutputEntityJsonView.Basic.class)
+    public DataResponse setUserDepartment(@RequestParam("user_id") Long userId, @RequestParam("department_id") Long departmentId) {
+
+        userService.setDepartmentId(userId, departmentId);
+        return new DataResponse();
+    }
+
+    @RequestMapping("search-by-name")
+    @JsonView(OutputEntityJsonView.Detail.class)
+    public DataResponse searchUserByName(@RequestParam("name") String name) {
+
+        return new DataResponse().put("user_list", userService.searchByName(name));
+    }
+
     @RequestMapping("/delete")
     @JsonView(OutputEntityJsonView.Detail.class)
     public DataResponse deleteUser(@RequestParam("id") Long id) {

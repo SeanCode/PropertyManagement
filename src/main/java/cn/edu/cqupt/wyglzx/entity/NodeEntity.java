@@ -38,7 +38,6 @@ public class NodeEntity {
     public static final int TYPE_ROOM = 2;
     public static final int TYPE_INSTITUTION = 3;
 
-    private int[] parentIdArray;
     private List<NodeEntity> children;
     private boolean isParent = true; //temp true
     private String typeName;

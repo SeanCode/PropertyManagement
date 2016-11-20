@@ -10,6 +10,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -107,6 +109,20 @@ public class UserService {
         userEntity = userDao.save(userEntity);
 
         return userEntity;
+    }
+
+    public List<UserEntity> searchByName(String name) {
+
+        return name.length() > 0 ? userDao.getUserListByNameLike(name) : new ArrayList<>();
+    }
+
+    public void setDepartmentId(Long userId, Long departmentId) {
+        UserEntity userEntity = checkById(userId);
+        if (!userEntity.getDepartmentId().equals(departmentId)) {
+            userEntity.setDepartmentId(departmentId);
+            userEntity.setUpdateTime(Util.time());
+            userDao.save(userEntity);
+        }
     }
 
     public Integer getUserAmount() {

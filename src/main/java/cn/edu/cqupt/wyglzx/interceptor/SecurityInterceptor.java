@@ -13,19 +13,15 @@ import javax.servlet.http.HttpServletResponse;
 import java.net.URI;
 
 @Component
-public class SecurityInterceptor implements HandlerInterceptor
-{
+public class SecurityInterceptor implements HandlerInterceptor {
 
     private static Logger logger = org.slf4j.LoggerFactory.getLogger(SecurityInterceptor.class);
 
 
-    private boolean canGuestAccess(String path)
-    {
-        for (int i = 0; i < Config.PATH_GUEST_CAN_ACCESS.length; i++)
-        {
-            if (Config.PATH_GUEST_CAN_ACCESS[i].equals(path))
-            {
-                return  true;
+    private boolean canGuestAccess(String path) {
+        for (int i = 0; i < Config.PATH_GUEST_CAN_ACCESS.length; i++) {
+            if (Config.PATH_GUEST_CAN_ACCESS[i].equals(path)) {
+                return true;
             }
         }
 
@@ -33,8 +29,7 @@ public class SecurityInterceptor implements HandlerInterceptor
     }
 
     private String getRequiredParam(HttpServletRequest httpServletRequest, String key) throws ParamNotSetException {
-        if (!httpServletRequest.getParameterMap().containsKey(key))
-        {
+        if (!httpServletRequest.getParameterMap().containsKey(key)) {
             throw new ParamNotSetException(key);
         }
 
@@ -42,8 +37,7 @@ public class SecurityInterceptor implements HandlerInterceptor
     }
 
     @Override
-    public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception
-    {
+    public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
         URI uri = new URI(httpServletRequest.getRequestURI());
         String path = uri.getPath().substring(1);
 
@@ -52,28 +46,24 @@ public class SecurityInterceptor implements HandlerInterceptor
 //        httpServletResponse.setHeader("Access-Control-Max-Age", "3600");
 //        httpServletResponse.setHeader("Access-Control-Expose-Headers", "Set-Cookie");
 
-        logger.trace(String.format("path: %s", path));
+        logger.info(String.format("path: %s", path));
 
-        if (!canGuestAccess(path))
-        {
-
-        }
+//        if (!canGuestAccess(path))
+//        {
+//
+//        }
 
         return true;
     }
 
 
-
-
     @Override
-    public void postHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, ModelAndView modelAndView) throws Exception
-    {
+    public void postHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, ModelAndView modelAndView) throws Exception {
 
     }
 
     @Override
-    public void afterCompletion(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, Exception e) throws Exception
-    {
+    public void afterCompletion(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, Exception e) throws Exception {
 
     }
 }

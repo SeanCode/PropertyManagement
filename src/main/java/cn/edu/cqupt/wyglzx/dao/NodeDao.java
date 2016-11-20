@@ -7,6 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigInteger;
 import java.util.List;
 
 /**
@@ -26,5 +27,8 @@ public interface NodeDao extends JpaRepository<NodeEntity, Long> {
 
     @Query(value = "select * from node where parent_id like concat('%|',:parent_id,'|%') and type != 2 and weight >= 0", nativeQuery = true)
     List<NodeEntity> getNodeInstitutionListByParentId(@Param("parent_id") Long parentId);
+
+    @Query(value = "select id from node order by id ASC", nativeQuery = true)
+    List<BigInteger> getAllNodesId();
 
 }

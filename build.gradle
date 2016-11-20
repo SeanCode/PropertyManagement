@@ -30,6 +30,7 @@ targetCompatibility = 1.8
 repositories {
     jcenter()
     mavenCentral()
+    maven { url "https://jitpack.io" }
     maven { url "https://repo.spring.io/snapshot" }
     maven { url "https://repo.spring.io/milestone" }
 }
@@ -52,5 +53,6 @@ dependencies {
     compile('com.google.guava:guava:19.0')
     compile('org.apache.tomcat:tomcat-jdbc')
     compile('mysql:mysql-connector-java')
+    compile 'com.github.SilenceDut:jpinyin:v1.0'
     providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
 }
