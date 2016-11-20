@@ -45,24 +45,6 @@ public class DepartmentController {
         return new DataResponse().put("department_list", departmentService.getDepartmentListByRootId(rootId));
     }
 
-    @RequestMapping("/tree-with-user-list")
-    @JsonView(OutputEntityJsonView.Tree.class)
-    public DataResponse getDepartmentTreeWithUserList(@RequestParam("id") Long id,
-                                                      @RequestParam(value = "level", required = false) Integer level) {
-
-        if (level == null || level < 0) {
-            level = 0;
-        }
-
-        return new DataResponse().put("department_tree", departmentService.getDepartmentTree(id, level, true));
-    }
-
-    @RequestMapping("/with-user-list")
-    @JsonView(OutputEntityJsonView.Tree.class)
-    public DataResponse getDepartmentUserList(@RequestParam("id") Long id) {
-        return new DataResponse().put("department", departmentService.getDepartmentWithUserList(id));
-    }
-
     @RequestMapping("/name-update")
     @JsonView(OutputEntityJsonView.Basic.class)
     public DataResponse updateDepartmentName(@RequestParam("id") Long id,
@@ -85,6 +67,25 @@ public class DepartmentController {
 
         departmentService.removeDepartment(id);
         return new DataResponse();
+    }
+
+    //-----------------------------下面的api暂时没有用-----------------
+    @RequestMapping("/tree-with-user-list")
+    @JsonView(OutputEntityJsonView.Tree.class)
+    public DataResponse getDepartmentTreeWithUserList(@RequestParam("id") Long id,
+                                                      @RequestParam(value = "level", required = false) Integer level) {
+
+        if (level == null || level < 0) {
+            level = 0;
+        }
+
+        return new DataResponse().put("department_tree", departmentService.getDepartmentTree(id, level, true));
+    }
+
+    @RequestMapping("/with-user-list")
+    @JsonView(OutputEntityJsonView.Tree.class)
+    public DataResponse getDepartmentUserList(@RequestParam("id") Long id) {
+        return new DataResponse().put("department", departmentService.getDepartmentWithUserList(id));
     }
 
 

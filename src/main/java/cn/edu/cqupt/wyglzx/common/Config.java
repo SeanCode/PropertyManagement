@@ -4,7 +4,7 @@ public class Config {
 
     public static final String[] PATH_GUEST_CAN_ACCESS = new String[]{};
 
-    public static final boolean IS_DEBUG = true;
+    public static final boolean IS_DEBUG = false;
 
     public static final int RECORD_WARNING_VALUE = 100;
 

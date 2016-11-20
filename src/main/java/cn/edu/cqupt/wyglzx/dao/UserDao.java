@@ -26,7 +26,7 @@ public interface UserDao extends JpaRepository<UserEntity, Long> {
     @Query(value = "select count(*) from user where weight >= 0", nativeQuery = true)
     Integer getUserAmount();
 
-    @Query(value = "select * from user where name like '%:n%' and weight >= 0", nativeQuery = true)
-    List<UserEntity> getUserListByNameLike(@Param("n") String name);
+    @Query(value = "select * from user where name like %:name% and weight >= 0", nativeQuery = true)
+    List<UserEntity> getUserListByNameLike(@Param("name") String name);
 
 }
