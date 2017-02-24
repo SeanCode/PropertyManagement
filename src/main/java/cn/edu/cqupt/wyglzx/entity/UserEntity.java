@@ -28,6 +28,8 @@ public class UserEntity {
     private Long createTime = 0L;
     private Long updateTime = 0L;
 
+    private String departmentName = "未知";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -191,6 +193,17 @@ public class UserEntity {
 
     public void setUpdateTime(Long updateTime) {
         this.updateTime = updateTime;
+    }
+
+    @Transient
+    @JsonProperty("department")
+    @JsonView({OutputEntityJsonView.Detail.class})
+    public String getDepartmentName() {
+        return departmentName;
+    }
+
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
     }
 
     @Override

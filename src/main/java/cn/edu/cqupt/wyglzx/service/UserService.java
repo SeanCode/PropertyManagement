@@ -1,8 +1,10 @@
 package cn.edu.cqupt.wyglzx.service;
 
 import cn.edu.cqupt.wyglzx.common.Util;
+import cn.edu.cqupt.wyglzx.dao.DepartmentDao;
 import cn.edu.cqupt.wyglzx.dao.InstitutionDao;
 import cn.edu.cqupt.wyglzx.dao.UserDao;
+import cn.edu.cqupt.wyglzx.entity.DepartmentEntity;
 import cn.edu.cqupt.wyglzx.entity.UserEntity;
 import cn.edu.cqupt.wyglzx.exception.ExistsException;
 import cn.edu.cqupt.wyglzx.exception.NotExistsException;
@@ -11,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -25,6 +27,9 @@ public class UserService {
 
     @Autowired
     InstitutionDao institutionDao;
+
+    @Autowired
+    DepartmentDao departmentDao;
 
     public UserEntity checkById(Long id) {
         UserEntity userEntity = userDao.getUserById(id);
@@ -42,7 +47,14 @@ public class UserService {
     }
 
     public List<UserEntity> getUserListByDepartmentId(Long departmentId) {
-        return userDao.getUserListByDepartmentId(departmentId);
+        List<UserEntity> users = userDao.getUserListByDepartmentId(departmentId);
+        for (UserEntity user : users) {
+            DepartmentEntity department = departmentDao.getDepartmentById(user.getDepartmentId());
+            if (department != null) {
+                user.setDepartmentName(department.getName());
+            }
+        }
+        return users;
     }
 
     public UserEntity getUserById(Long id) {
@@ -112,8 +124,18 @@ public class UserService {
     }
 
     public List<UserEntity> searchByName(String name) {
+        if (name.length() > 0) {
+            List<UserEntity> users = userDao.getUserListByNameLike(name);
+            for (UserEntity user : users) {
+                DepartmentEntity department = departmentDao.getDepartmentById(user.getDepartmentId());
+                if (department != null) {
+                    user.setDepartmentName(department.getName());
+                }
+            }
+            return users;
+        }
 
-        return name.length() > 0 ? userDao.getUserListByNameLike(name) : new ArrayList<>();
+        return new ArrayList<>();
     }
 
     public void setDepartmentId(Long userId, Long departmentId) {
